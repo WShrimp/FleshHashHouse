@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8>
+        <meta name="vewport" content="width=device-width, initial-scale=1.0>
+        <meta http-equiv="X-UA-Compatable" content="ie=edge">
+        <title>Flesh Hash House</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    
+    <body>
+    <section class = "menu"> 
+        <section class = fail-container>
+            <h1 id="fail">FAIL</h1>
+            <button class="menu-button" id="again-button">Again</button>
+        </section>
+        <section class = menu-container>
+            <h2 id="max-score"
+            >MAX SCORE: DAY 1</h2>
+            <button class="menu-button" id="start-button">New Game</button>
+        </section>
+        <section class = "upgrade-container">
+            <h2 id="upgrades">UPGRADES</h2>
+            <!-- <button class="menu-button" id="start-button">Start</button> -->
+        </section>
+    </section>
+    <section class="top-bar">
+        <div class="left-panel">
+            <div class="left-info">
+                <div id="money">$50</div>
+                <div id="goal">Day Goal: $100</div>
+            </div>
+            <div class="lives" id="lives"></div>
+        </div>
+        <div class="right-info">
+            <div id="day">Day: 0</div>
+            <div id="time">3:00</div>
+        </div>
+    </section>
+
+    <section class="customer">
+        <figure>
+            <img src="/images/placeholder.jpg" alt="customer image">
+        </figure>
+        <div class="wait-timer" id="wait-timer"></div>
+    </section>
+
+    <section class="order-panel">
+        <div class="order" id="order"></div>
+    </section>
+
+    <section class="plate" id="plate"></section>
+    
+    <div class="counter"></div>
+    <section class="bottom-panel">
+        <section class="table" id="table"></section>
+     
+        <section class="kitchen"><div class="grid">
+            </div>
+        </section>
+    </section>
+
+
+    <script src="script.js"></script>
+</body>
+</html>
