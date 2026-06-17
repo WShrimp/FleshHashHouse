@@ -49,6 +49,7 @@ button {
 }
 .left-info #money {
     font-size: 60px;
+    z-index: 20;
 }
 .left-info #goal {
     font-size: 40px;
@@ -297,10 +298,11 @@ button {
 }
 .menu-button {
     width: 70%;
-    height: 120px;
+    /* height: 120px; */
     font-size: 50px;
     z-index: 100;
-    margin: 30px;
+    margin: 20px;
+    padding: 5%
 }
 .menu-container {
     align-self: center;
@@ -310,7 +312,8 @@ button {
     align-items: center;
     z-index: 100;
     width: 60%;
-    height: 35%;
+    padding-bottom: 5%;
+    /* height: 35%; */
     background: rgb(36, 37, 84);
     border: 5px, rgb(36, 37, 84);
     border-style: solid;
@@ -334,13 +337,35 @@ button {
     border: 5px, rgb(36, 37, 84);
     border-style: solid;
 }
-
-.run-upgrade-button{
-    background-color: rgb(64, 50, 110);
-    height: 90px;
-    width: 80%;
+#upgrades {
+    margin-top: 10px;
+}
+.run-upgrade-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+    width: 85%;
     margin: 5px;
-    /* padding: 10px; */
+    padding: 30px;
+    padding-left: 20px;
+    background-color: rgb(64, 50, 110);
+    border: 5px solid rgb(36, 37, 84);
+    gap: 15px;
+}
+
+.upgrade-level {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    padding: 0.2em;
+    width: 1.4em;
+    height: 1.4em;
+    
+    background-color: rgb(36, 37, 84);
+    /* border-radius: 5px; */
+    flex-shrink: 0;
 }
 
 .fail-container {
@@ -440,6 +465,14 @@ button {
     to {
         transform: translateY(100px) rotate(90deg);
         opacity: 0;
+    }
+}
 
+@keyframes flash {
+    from{
+        opacity: 1;
+    }
+    to{
+        opacity: 0.25;
     }
 }

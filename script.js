@@ -52,7 +52,6 @@ const heart_image = 'images/heart.png'
 // savable
 let day = 0
 let money = 50 // also in reset btw
-let customers_left = 1
 let min_wait_time = 3
 // let lives
 
@@ -65,18 +64,20 @@ let is_monster = true
 let full_order = []
 let full_plate = []
 let score = 0
+let in_game = false
+let last_heart
 
 run_upgrades={
-    'max_ingredients': {name: '+ 1 max ingredients', type: 'add', base_value: 3, value: 3, max: 3, level: 0},
-    'money_multiplier': {name: 'more tips', type: 'multiply', base_value: 1.2, value: 1.2, max: 5, level: 0},
-    'animation_speed': {name: 'faster animation speed', type: 'add', base_value: 1, value: 1, max: 1, level: 0},
-    'additional_customer_time': {name: 'customer patience', type: 'add', base_value: 0, value: 0, max: 5, level: 0},
-    'additional_day_time': {name: 'longer day time', type: 'multiply', base_value: 30, value: 30, max: 5, level: 0},
-    'faster_cooking_multiplier': {name: 'faster cooking', type: 'multiply', baswe_value: 1.1, value: 1.1, max: 5, level: 0},
-    'starting_money': {name: 'starting money', type: 'multiply', base_value: 50, value: 50, max: 5, level: 0},
-    'click_power': {name: 'click power', type: 'multiply', base_value: 1.25, value: 1.2, max: 5, level: 0},
-    'money': {name: 'money + 100', type: 'money', base_value: 100, value: 100, max: 500, level: 0},
-    'lives': {name: 'lives + 1', type: 'lives', base_value: 3, value: 3, max: 500, level: 0},
+    'max_ingredients': {name: '+ 1 max ingredients', type: 'add', base_value: 3, starting_value: 3, value: 3, max: 3, level: 0},
+    'money_multiplier': {name: 'more tips', type: 'multiply', base_value: 1.2, starting_value: 1.2, value: 1.2, max: 5, level: 0},
+    'animation_speed': {name: 'faster animation speed', type: 'add', base_value: 1, starting_value: 1, value: 1, max: 1, level: 0},
+    'additional_customer_time': {name: 'customer patience', type: 'add', base_value: 0, starting_value: 0, value: 0, max: 5, level: 0},
+    'additional_day_time': {name: 'longer day time', type: 'multiply', base_value: 30, starting_value: 0, value: 0, max: 5, level: 0},
+    'faster_cooking_multiplier': {name: 'faster cooking', type: 'multiply', base_value: 1.1, starting_value: 1, value: 1, max: 5, level: 0},
+    'starting_money': {name: 'starting money', type: 'multiply', base_value: 50, starting_value: 0, value: 0, max: 5, level: 0},
+    'click_power': {name: 'click power', type: 'multiply', base_value: 1.25, starting_value: 1, value: 1, max: 5, level: 0},
+    'money': {name: 'money + 50', type: 'money', base_value: 50, starting_value: 50, value: 50, max: 500, level: ' '},
+    'lives': {name: 'lives + 1', type: 'lives', base_value: 3, starting_value: 3, value: 3, max: 500, level: 3},
 }
 
 ingredients_dictionary={ 
@@ -93,6 +94,7 @@ ingredients_dictionary={
 // img_ingredient = {
 //     "m-meat": 1
 // };
+document.getElementById("root").requestFullscreen({ navigationUI: "hide" });
 
 if (localStorage.getItem('score')) {
     score_display.innerText = 'MAX SCORE: DAY ' + localStorage.getItem('score')
@@ -196,10 +198,12 @@ function create_buttons(ingredient) {
     item.appendChild(upgrade_button)
 
     item_button.addEventListener('click', function() {
+        console.log("item button clicked")
         tap_ingredient(ingredient)
     })
     
     upgrade_button.addEventListener('click', function() {
+        console.log("upgrade button clicked")
         upgrade_ingredient(upgrade_button ,ingredient, cost)
     })
 }
@@ -235,6 +239,7 @@ setInterval(() => {
         const ingredient_button = document.getElementById(id)
         ingredient_button.style.background = `linear-gradient(to right, rgb(64, 50, 110) 0%, rgb(64, 50, 110) ${gradient_stage}%,rgb(96, 67, 127) ${gradient_stage}%, rgb(96, 67, 127) 100%)`
     }
+    console.log("passive cooking")
 }, 200);
 
 
@@ -248,6 +253,7 @@ function update_hearts() {
         heart.src = 'images/heart.png'
         heart.className = 'heart'
         // heart.id = 'heart'
+        last_heart = heart
         lives.appendChild(heart)
     }
     // lives.appendChild(heart)
@@ -256,8 +262,8 @@ function update_hearts() {
 function day_start(){
     save()
     update_hearts()
-    money += run_upgrades['starting_money'].value * run_upgrades['starting_money'].level
-    // money = 100000
+    plate.innerHTML = ""
+    money += run_upgrades['starting_money'].value
     money_display.textContent = '$' + money
     let minutes = day_min_time
     let seconds = 0
@@ -281,9 +287,13 @@ function day_start(){
             seconds = 59
             minutes -= 1
         }
+        if (minutes == 0 && seconds == 5) {
+            time_display.style.animation = 'flash 0.5s ease-in-out infinite'
+        }
         if (minutes < 0) {
             minutes = 0
             seconds = 0
+            time_display.style.animation = ''
             day_end()
         }
         time_display.textContent = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`  
@@ -303,16 +313,27 @@ customer_image.addEventListener('animationend', function(e) {
         let image_list = is_monster ? monster_images : human_images
         
         customer_image.src = image_list[Math.floor(Math.random( )*image_list.length)]
+        customer_image.style.display = 'none'
         
-        const bun_plate = document.createElement('img')
-        bun_plate.className = 'on-plate-bun'
-        bun_plate.src = "images/ingredients-plate/plate.png"
-        plate.appendChild(bun_plate)
-        plate.style.animation = 'slide-in ' + 0.6 / run_upgrades['animation_speed'].value + 's ease-in-out'
-        customer_image.style.animation = 'slide-in-opacity ' + 0.6 / Math.pow(run_upgrades['animation_speed'].value, 2) + 's ease-in-out'
-
-        wait_timer.style.animation = 'slide-left ' + Math.max(min_wait_time, (20 - day) + run_upgrades['additional_customer_time'].value) + 's linear'
     }
+})
+
+customer_image.addEventListener('load', function(e) {
+    if (!in_game) {
+        in_game = true
+        return
+    }
+
+    // customer_image.style.animation = 'slide-in-opacity ' + 0.6 / run_upgrades['animation_speed'].value + 's ease-in-out'
+    console.log("customer_image loaded")
+    const bun_plate = document.createElement('img')
+    bun_plate.className = 'on-plate-bun'
+    bun_plate.src = "images/ingredients-plate/plate.png"
+    plate.appendChild(bun_plate)
+    plate.style.animation = 'slide-in ' + 0.7 / run_upgrades['animation_speed'].value + 's ease-in-out'
+    customer_image.style.animation = 'slide-in-opacity ' + 0.7 / Math.pow(run_upgrades['animation_speed'].value, 2) + 's ease-in-out'
+    customer_image.style.display = 'block'
+    wait_timer.style.animation = 'slide-left ' + Math.max(min_wait_time, (20 - day) + run_upgrades['additional_customer_time'].value) + 's linear'
 })
 
 wait_timer.addEventListener('animationend', function(e) {
@@ -323,7 +344,7 @@ wait_timer.addEventListener('animationend', function(e) {
 })
 
 function fill_order() {
-    order.style.animation = 'fade-out ' + 0.2 / run_upgrades['animation_speed'].value + 's ease-in-out'
+    order.style.animation = 'fade-out ' + 0.3 / run_upgrades['animation_speed'].value + 's ease-in-out'
 }
 order.addEventListener('animationend', function(e) {
     if (e.animationName == 'fade-out') {
@@ -520,7 +541,13 @@ function give_plate(fail) {
         }, 1000);
         // lose()
         run_upgrades['lives'].value -= 1
-        update_hearts()
+        // update_hearts()
+        console.log("staring animation on: ", last_heart)
+        last_heart.style.animation = 'fall 0.8s ease-in-out'
+        last_heart.addEventListener('animationend', function(e) {
+            console.log('animation finished on: ', last_heart)
+            update_hearts()
+        })  
         if (run_upgrades['lives'].value <= 0) {
             lose()
             return
@@ -533,9 +560,11 @@ function give_plate(fail) {
     plate.style.animation = 'slide-out ' + 0.5 / run_upgrades['animation_speed'].value + 's ease-in-out'
 
     console.log("PLATE GIVEN")
-    
-
 }
+
+
+
+
 plate.addEventListener('animationend', function(e) {
     if (e.animationName == 'slide-out') {
         plate.innerHTML = ""
@@ -578,13 +607,22 @@ function show_upgrades() {
     menu.style.display = 'flex'
     upgrade_container.style.display = 'flex'
     for (let i = 0; i < 3; i++) {
-        let run_upgrade = document.createElement('button')
-        run_upgrade.className = 'run-upgrade-button'
+        let run_upgrade_button = document.createElement('button')
+        run_upgrade_button.className = 'run-upgrade-button'
         let random_upgrade  = get_random_upgrade ()
-        run_upgrade.id = random_upgrade 
-        run_upgrade.textContent = run_upgrades[random_upgrade].name
-        upgrade_container.appendChild(run_upgrade)
-        run_upgrade.addEventListener('click', function() {
+        run_upgrade_button.id = random_upgrade
+        run_upgrade_button.textContent = run_upgrades[random_upgrade].name
+        // run_upgrade_button.textContent = '[' + run_upgrades[random_upgrade].level + '] — ' + run_upgrades[random_upgrade].name
+        upgrade_container.appendChild(run_upgrade_button)
+        if (run_upgrades[random_upgrade].type == 'add' || run_upgrades[random_upgrade].type == 'multiply') {
+            console.log("adding level to: ", run_upgrades[random_upgrade].name)
+            console.log("type: ", run_upgrades[random_upgrade].type)
+            let upgrade_level = document.createElement('div')
+            upgrade_level.className = 'upgrade-level'
+            upgrade_level.textContent = run_upgrades[random_upgrade].level + '/' + run_upgrades[random_upgrade].max
+            run_upgrade_button.appendChild(upgrade_level)
+        }
+        run_upgrade_button.addEventListener('click', function() {
             let upgrade_id = this.id
             choose_upgrade(upgrade_id)
         })
@@ -614,10 +652,10 @@ function update_run_upgrades(upgrade_id) {
         run_upgrades[upgrade_id].level -= 1
         money += run_upgrades[upgrade_id].value
     }
-    if (run_upgrades[upgrade_id].type == 'lives') {
-        run_upgrades[upgrade_id].level -= 1
-        run_upgrades[upgrade_id].value += 1
-    }
+    // if (run_upgrades[upgrade_id].type == 'lives') {
+    //     run_upgrades[upgrade_id].level -= 1
+    //     run_upgrades[upgrade_id].value += 1
+    // }
     console.log('run upgrade', upgrade_id, 'updated to', run_upgrades[upgrade_id].value)
 }
 
@@ -671,7 +709,7 @@ function reset(full) {
         kitchen.innerHTML = ''
         for (run_upgrade in run_upgrades) {
             run_upgrades[run_upgrade].level = 0
-            run_upgrades[run_upgrade].value = run_upgrades[run_upgrade].base_value
+            run_upgrades[run_upgrade].value = run_upgrades[run_upgrade].starting_value
         }
         for (ingredient in ingredients_dictionary) {
             ingredients_dictionary[ingredient].level = ingredients_dictionary[ingredient].initial_level
