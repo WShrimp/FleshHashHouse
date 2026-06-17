@@ -92,6 +92,7 @@ ingredients_dictionary={
     "m-topping": { type: 'topping', is_monster: true, count: 0, difficulity: 200, initial_level: -1, level: -1, bits: 0},
 };
 
+window.scrollTo(0, 0);
 
 fullscreen_button.addEventListener('click', toggleFullscreen)
 
@@ -719,6 +720,7 @@ again_button.addEventListener('click', function() {
     show_upgrades()
 })
 start_button.addEventListener('click', function() {
+    window.scrollTo(0, 0);
     menu.style.display = 'none'
     menu_container.style.display = 'none'
     reset(true)
