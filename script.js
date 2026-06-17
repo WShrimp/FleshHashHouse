@@ -26,6 +26,7 @@ const menu_container = document.querySelector('.menu-container')
 const upgrade_container = document.querySelector('.upgrade-container')
 const lives_display = document.getElementById('lives')
 const score_display = document.getElementById('max-score')
+const fullscreen_button = document.getElementById('fullscreen-button')
 
 const monster_images_count = 11
 const human_images_count = 8
@@ -77,7 +78,7 @@ run_upgrades={
     'starting_money': {name: 'starting money', type: 'multiply', base_value: 50, starting_value: 0, value: 0, max: 5, level: 0},
     'click_power': {name: 'click power', type: 'multiply', base_value: 1.25, starting_value: 1, value: 1, max: 5, level: 0},
     'money': {name: 'money + 50', type: 'money', base_value: 50, starting_value: 50, value: 50, max: 500, level: ' '},
-    'lives': {name: 'lives + 1', type: 'lives', base_value: 3, starting_value: 3, value: 3, max: 500, level: 3},
+    'lives': {name: 'lives + 1', type: 'add', base_value: 3, starting_value: 3, value: 3, max: 3, level: 3},
 }
 
 ingredients_dictionary={ 
@@ -94,7 +95,37 @@ ingredients_dictionary={
 // img_ingredient = {
 //     "m-meat": 1
 // };
-document.getElementById("root").requestFullscreen({ navigationUI: "hide" });
+
+// fullscreen_button.addEventListener('click', toggleFullscreen)
+
+// // toggleFullscreen()
+// function toggleFullscreen() {
+//     const elem = document.documentElement; // или document.getElementById("root")
+    
+//     if (!document.fullscreenElement) {
+//         // Вход в полноэкранный режим
+//         if (elem.requestFullscreen) {
+//             elem.requestFullscreen({ navigationUI: "hide" })
+//                 .catch(err => {
+//                     // Если navigationUI не поддерживается
+//                     elem.requestFullscreen();
+//                 });
+//         } else if (elem.webkitRequestFullscreen) { // Safari
+//             elem.webkitRequestFullscreen();
+//         } else if (elem.msRequestFullscreen) { // IE/Edge
+//             elem.msRequestFullscreen();
+//         }
+//     } else {
+//         // Выход из полноэкранного режима
+//         if (document.exitFullscreen) {
+//             document.exitFullscreen();
+//         } else if (document.webkitExitFullscreen) {
+//             document.webkitExitFullscreen();
+//         } else if (document.msExitFullscreen) {
+//             document.msExitFullscreen();
+//         }
+//     }
+// }
 
 if (localStorage.getItem('score')) {
     score_display.innerText = 'MAX SCORE: DAY ' + localStorage.getItem('score')
@@ -106,7 +137,7 @@ if (localStorage.getItem('score')) {
 }
 
 function save() {
-    console.log('SAVING DATA')
+    // console.log('SAVING DATA')
     localStorage.setItem('run_upgrades', JSON.stringify(run_upgrades))
     localStorage.setItem('ingredients_dictionary', JSON.stringify(ingredients_dictionary))
     localStorage.setItem('day', day)
@@ -114,7 +145,7 @@ function save() {
     score = day
     if (localStorage.getItem('score') && localStorage.getItem('score') < score){
         localStorage.setItem('score', score)
-        console.log('writing new score')
+        // console.log('writing new score')
     }
     localStorage.setItem('score', score)
 }
@@ -133,7 +164,7 @@ function load() {
 }
 
 function delete_data() {
-    console.log('DELETING DATA')
+    // console.log('DELETING DATA')
     localStorage.removeItem('score')
     localStorage.removeItem('run_upgrades')
     localStorage.removeItem('ingredients_dictionary')
@@ -198,12 +229,10 @@ function create_buttons(ingredient) {
     item.appendChild(upgrade_button)
 
     item_button.addEventListener('click', function() {
-        console.log("item button clicked")
         tap_ingredient(ingredient)
     })
     
     upgrade_button.addEventListener('click', function() {
-        console.log("upgrade button clicked")
         upgrade_ingredient(upgrade_button ,ingredient, cost)
     })
 }
@@ -239,7 +268,7 @@ setInterval(() => {
         const ingredient_button = document.getElementById(id)
         ingredient_button.style.background = `linear-gradient(to right, rgb(64, 50, 110) 0%, rgb(64, 50, 110) ${gradient_stage}%,rgb(96, 67, 127) ${gradient_stage}%, rgb(96, 67, 127) 100%)`
     }
-    console.log("passive cooking")
+    // console.log("passive cooking")
 }, 200);
 
 
@@ -260,9 +289,12 @@ function update_hearts() {
 }
 
 function day_start(){
+    // console.log("Day Start")
     save()
+    // console.log("update hearts to: ", run_upgrades['lives'].value)
     update_hearts()
     plate.innerHTML = ""
+    in_game = true
     money += run_upgrades['starting_money'].value
     money_display.textContent = '$' + money
     let minutes = day_min_time
@@ -271,7 +303,6 @@ function day_start(){
         seconds = 0 + run_upgrades['additional_day_time'].value}
     day += 1
     score = day
-    console.log(score)
     let day_goal = 100 * day
     goal_display.textContent = `Day Goal: ` + `$${day_goal}`
     customer_appear()
@@ -301,15 +332,14 @@ function day_start(){
 }
 
 function customer_appear() {
-    console.log("customer_appear")    
+    // console.log("customer_appear")    
     fill_order()
     customer_image.style.animation = 'slide-out-opacity ' + 0.6 / run_upgrades['animation_speed'].value + 's ease-in-out'
 }
 customer_image.addEventListener('animationend', function(e) {
     if (e.animationName == 'slide-out-opacity') {
-        console.log("animation ended customer_image")        
         is_monster = Boolean(Math.round(Math.random()))
-        console.log("is_monster: ", is_monster)
+        // console.log("is_monster: ", is_monster)
         let image_list = is_monster ? monster_images : human_images
         
         customer_image.src = image_list[Math.floor(Math.random( )*image_list.length)]
@@ -325,7 +355,6 @@ customer_image.addEventListener('load', function(e) {
     }
 
     // customer_image.style.animation = 'slide-in-opacity ' + 0.6 / run_upgrades['animation_speed'].value + 's ease-in-out'
-    console.log("customer_image loaded")
     const bun_plate = document.createElement('img')
     bun_plate.className = 'on-plate-bun'
     bun_plate.src = "images/ingredients-plate/plate.png"
@@ -350,7 +379,6 @@ order.addEventListener('animationend', function(e) {
     if (e.animationName == 'fade-out') {
         order.innerHTML = ""
         full_order = []
-        console.log("ANIMATION ORDER END")
         const ingredients_avaliable = []
         for (let id in ingredients_dictionary){
             if (ingredients_dictionary[id].level >= 0) {
@@ -403,11 +431,9 @@ function calculate_buy_price(ingredient) {
 
 
 // add_ingredient('m-meat')
-
+// add ingredient on table
 function add_ingredient(ingredient) {
-    console.log("Add ingredient ", ingredient);
     const tableRect = table.getBoundingClientRect();
-    // console.log('top:', plateRect.top, 'bottom:', plateRect.bottom, 'left:', plateRect.left, 'right:', plateRect.right)
     const movable_item = document.createElement('div');
     movable_item.className = "ingredient_item"
     movable_item.style.top = tableRect.top + Math.random() * 240 + 'px'
@@ -433,7 +459,6 @@ function add_ingredient(ingredient) {
             plateRect.left <= parseInt(movable_item.style.left) &&
             plateRect.right >= parseInt(movable_item.style.left)
         ) {
-            console.log('on plate')
             place_on_plate(movable_item, ingredient)
             return
         }
@@ -443,7 +468,6 @@ function add_ingredient(ingredient) {
             tableRect.left >= parseInt(movable_item.style.left) + 80 ||
             tableRect.right <= parseInt(movable_item.style.left) - 80
         ) {
-            console.log('not on table')
             movable_item.style.animation = 'fall ' + 0.5 / run_upgrades['animation_speed'].value + 's ease-in-out'
             ingredients_dictionary[ingredient].count -= 1
             movable_item.addEventListener('animationend', e => {
@@ -470,20 +494,17 @@ function place_on_plate(movable_item, ingredient) {
 
 function check_plate() {
     plate_given = true
-    console.log("Check plate")
-    console.log("full_order: ", full_order)
-    console.log("full_plate: ", full_plate)
     let correct = 0
     // let fail = 0
     for (let i = 0; i < full_order.length; i++){
         if (ingredients_dictionary[full_plate[i]].is_monster != is_monster) {
             if (is_monster) {
-                console.log("It's a monster, no money")
+                // console.log("It's a monster, no money")
                 give_plate(1)
                 return
             }
             else {
-                console.log("It's not a monster, FAIL FAIL FAIL")
+                // console.log("It's not a monster, FAIL FAIL FAIL")
                 give_plate(2)
                 return
             }
@@ -506,46 +527,40 @@ function check_plate() {
 function give_plate(fail) {
     // if (plate_given) {return}
     // let plate_given = true
-    console.log("GIVE PLATE", fail)
+    // console.log("GIVE PLATE", fail)
     const bun_top = document.createElement('img')
     bun_top.className = 'on-plate'
     bun_top.src = `images/ingredients-plate/bun-top.png`
     plate.appendChild(bun_top)
     
     if (fail == 0) {
-        console.log("Correct!")
+        // console.log("Correct!")
         for (let i = 0; i < full_plate.length; i++) {
             money += Math.round((ingredients_dictionary[full_plate[i]].difficulity - 30) / 4 * run_upgrades['money_multiplier'].value)
             money_display.textContent = '$' + money.toString()
-            // plate.removeChild(plate.children[i])
         }
     }
     if (fail == 1) {
-        console.log("It's a monster, no money")
+        // console.log("It's a monster, no money")
         money -= 10
+        show_emote('eww')
         money_display.textContent = '$' + money.toString()
         if (money < 0) {
             lose()
         }
     }
     if (fail == 2) {
-        console.log("It's not a monster, FAIL FAIL FAIL")
+        // console.log("It's not a monster, FAIL FAIL FAIL")
 
         
-        let scream = document.createElement('h1')
-        scream.textContent = "AAAAAAAAA!!!!!"
-        scream.className = 'emote'
-        document.body.appendChild(scream)
-        setTimeout(() => {
-            document.body.removeChild(scream)
-        }, 1000);
+        show_emote('scream')
         // lose()
         run_upgrades['lives'].value -= 1
         // update_hearts()
-        console.log("staring animation on: ", last_heart)
+        // console.log("staring animation on: ", last_heart)
         last_heart.style.animation = 'fall 0.8s ease-in-out'
         last_heart.addEventListener('animationend', function(e) {
-            console.log('animation finished on: ', last_heart)
+            // console.log('animation finished on: ', last_heart)
             update_hearts()
         })  
         if (run_upgrades['lives'].value <= 0) {
@@ -554,15 +569,25 @@ function give_plate(fail) {
         }
         // return
     }
-    // if (fail == 3) {
-
-    // }
+    if (fail == 3) {
+        show_emote('hmpf')
+    }
     plate.style.animation = 'slide-out ' + 0.5 / run_upgrades['animation_speed'].value + 's ease-in-out'
 
-    console.log("PLATE GIVEN")
+    // console.log("PLATE GIVEN")
 }
 
-
+function show_emote(emote_name) {
+    let emote = document.createElement('img')
+    // scream.textContent = "AAAAAAAAA!!!!!"
+    emote.className = 'emote'
+    emote.src = 'images/emotes/' + emote_name + '.png'
+    document.body.appendChild(emote)
+    emote.style.animation = 'emote-fade 1.5s ease-in-out'
+    setTimeout(() => {
+        emote.remove()
+    }, 1500);
+}
 
 
 plate.addEventListener('animationend', function(e) {
@@ -577,8 +602,9 @@ plate.addEventListener('animationend', function(e) {
 
 
 function lose() {
+    in_game = false
     clearInterval(timer)
-    console.log("FAIL")
+    // console.log("LOSE")
     wait_timer.style.animation = ''
     
     setTimeout(() => {
@@ -615,8 +641,8 @@ function show_upgrades() {
         // run_upgrade_button.textContent = '[' + run_upgrades[random_upgrade].level + '] — ' + run_upgrades[random_upgrade].name
         upgrade_container.appendChild(run_upgrade_button)
         if (run_upgrades[random_upgrade].type == 'add' || run_upgrades[random_upgrade].type == 'multiply') {
-            console.log("adding level to: ", run_upgrades[random_upgrade].name)
-            console.log("type: ", run_upgrades[random_upgrade].type)
+            // console.log("adding level display to: ", run_upgrades[random_upgrade].name)
+            // console.log("type: ", run_upgrades[random_upgrade].type)
             let upgrade_level = document.createElement('div')
             upgrade_level.className = 'upgrade-level'
             upgrade_level.textContent = run_upgrades[random_upgrade].level + '/' + run_upgrades[random_upgrade].max
@@ -630,7 +656,7 @@ function show_upgrades() {
 }
 
 function choose_upgrade (upgrade_id) {
-    console.log(upgrade_id)
+    // console.log(upgrade_id)
     run_upgrades[upgrade_id].level += 1
     menu.style.display = 'none'
     upgrade_container.style.display = 'none'
@@ -642,6 +668,7 @@ function choose_upgrade (upgrade_id) {
 
 function update_run_upgrades(upgrade_id) {
     // for (upgrade in run_upgrades) {
+    // console.log('changing run upgrade', upgrade_id, 'from', run_upgrades[upgrade_id].value, 'level: ', run_upgrades[upgrade_id].level)
     if (run_upgrades[upgrade_id].type == 'add') {
         run_upgrades[upgrade_id].value += run_upgrades[upgrade_id].level
     }
@@ -656,7 +683,7 @@ function update_run_upgrades(upgrade_id) {
     //     run_upgrades[upgrade_id].level -= 1
     //     run_upgrades[upgrade_id].value += 1
     // }
-    console.log('run upgrade', upgrade_id, 'updated to', run_upgrades[upgrade_id].value)
+    // console.log('run upgrade', upgrade_id, 'updated to', run_upgrades[upgrade_id].value)
 }
 
 
