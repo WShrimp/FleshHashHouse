@@ -259,9 +259,7 @@ h4 {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    /* background: rgb(154, 52, 52); */
     position: fixed;
-    /* bottom: 5%; */
     bottom: 0%;
     width: 100%;
     height: 53%;
@@ -300,15 +298,15 @@ h4 {
     justify-content: center;
     position: fixed;
     height: 20vw;
+    width: 20vw;
     image-rendering: pixelated;
     z-index: 5;
-    
 }
 
 .item-picked {
     transform: scale(1.2) translateY(-3.5vh) translateX(-1vh);
-    /* padding-bottom: 5vh; */
-    /* scale: 1.5; */
+    padding-bottom: 5vh;
+    scale: 1.5;
 }
 
 /* ===== KITCHEN ===== */

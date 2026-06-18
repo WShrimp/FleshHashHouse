@@ -52,12 +52,12 @@ const heart_image = 'images/heart.png'
 
 // savable
 let day = 0
-let money = 50000 // also in reset btw
+let money = 50 // also in reset btw
 let min_wait_time = 3
 // let lives
 
 // temporary
-let day_min_time = 1
+let day_min_time = 3
 let timer
 let ingredient_type = ``
 let plate_given = false
@@ -283,7 +283,6 @@ setInterval(() => {
         const ingredient_button = document.getElementById(id)
         ingredient_button.style.background = `linear-gradient(to right, rgb(64, 50, 110) 0%, rgb(64, 50, 110) ${gradient_stage}%,rgb(96, 67, 127) ${gradient_stage}%, rgb(96, 67, 127) 100%)`
     }
-    console.log("passive cooking")
 }, 200);
 
 
@@ -451,34 +450,34 @@ function add_ingredient(ingredient) {
     const tableRect = table.getBoundingClientRect();
     const movable_item = document.createElement('div');
     movable_item.className = "ingredient_item"
-    movable_item.style.top = tableRect.top + Math.random() * 240 + 'px'
+    movable_item.style.top = tableRect.top + Math.random() * tableRect.height * 0.8 + 'px'
+    // movable_item.style.top = tableRect.top + Math.random() * 240 + 'px'
     movable_item.style.left = Math.random() * 85 + '%'
     const img = document.createElement('img')
     img.src = `images/ingredients-table/${ingredient}.png`
     // img.id = 'ingredient_on_table'
     table.appendChild(movable_item)
     movable_item.appendChild(img)
+    const imgsize = img.clientHeight;
     
     movable_item.addEventListener('touchstart', e => {
         e.preventDefault();
-        console.log('touchstart')
         img.className = 'item-picked'
     }, false)
     movable_item.addEventListener('touchmove', e => {
         e.preventDefault();
         let touch = e.targetTouches[0];
-        movable_item.style.top = touch.clientY - 100 + 'px';
-        movable_item.style.left = touch.clientX - 100 + 'px';
+        movable_item.style.top = touch.clientY - imgsize * 0.5 +'px';
+        movable_item.style.left = touch.clientX - imgsize * 0.5 + 'px';
         table.appendChild(movable_item)
     }, false)
     movable_item.addEventListener('touchend', e => {
         const plateRect = plate.getBoundingClientRect();
-        console.log('touchend')
         img.className = ''
         e.preventDefault();
         if (
             plateRect.top <= parseInt(movable_item.style.top) &&
-            plateRect.bottom >= parseInt(movable_item.style.top) + 100 &&
+            plateRect.bottom >= parseInt(movable_item.style.top) + imgsize * 0.5 &&
             plateRect.left <= parseInt(movable_item.style.left) &&
             plateRect.right >= parseInt(movable_item.style.left)
         ) {
@@ -486,10 +485,10 @@ function add_ingredient(ingredient) {
             return
         }
         if (
-            tableRect.top >= parseInt(movable_item.style.top) + 135 ||
-            tableRect.bottom <= parseInt(movable_item.style.top) + 80 ||
-            tableRect.left >= parseInt(movable_item.style.left) + 80 ||
-            tableRect.right <= parseInt(movable_item.style.left) + 80
+            tableRect.top >= parseInt(movable_item.style.top) + imgsize * 0.75 ||
+            tableRect.bottom <= parseInt(movable_item.style.top) + imgsize * 0.5 ||
+            tableRect.left >= parseInt(movable_item.style.left) + imgsize * 0.5 ||
+            tableRect.right <= parseInt(movable_item.style.left) + imgsize * 0.5
         ) {
             movable_item.style.animation = 'fall ' + 0.5 / run_upgrades['animation_speed'].value + 's ease-in-out'
             ingredients_dictionary[ingredient].count -= 1
