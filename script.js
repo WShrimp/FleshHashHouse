@@ -52,12 +52,12 @@ const heart_image = 'images/heart.png'
 
 // savable
 let day = 0
-let money = 50 // also in reset btw
+let money = 50000 // also in reset btw
 let min_wait_time = 3
 // let lives
 
 // temporary
-let day_min_time = 3
+let day_min_time = 1
 let timer
 let ingredient_type = ``
 let plate_given = false
@@ -99,7 +99,7 @@ window.addEventListener("load",function() {
         window.scrollTo(0, 1);
     }, 0);
 });
-// fullscreen_button.addEventListener('click', toggleFullscreen)
+fullscreen_button.addEventListener('click', toggleFullscreen)
 
 // toggleFullscreen()
 function toggleFullscreen() {
@@ -200,11 +200,16 @@ function create_buttons(ingredient) {
         // console.log("create buy button for ", ingredient_type)
         const buy = document.createElement('button')
         buy.id = `buy-${ingredient}`
-        buy.className = 'item-button'
+        buy.className = 'buy-button'
         ingredient_type = ingredients_dictionary[ingredient].type
         buy.textContent = '$' + calculate_buy_price(ingredient)
         buy.style.order = '10'
-        kitchen.appendChild(buy)
+        const cell = document.createElement('div')
+        cell.className = 'cell'
+        cell.id = `cell-${ingredient}`
+        kitchen.appendChild(cell)
+        cell.appendChild(buy)
+        // kitchen.appendChild(buy)
         buy.addEventListener('click', function() {
             buy_ingredient(ingredient)
         })
@@ -227,7 +232,11 @@ function create_buttons(ingredient) {
     let cost = calculate_price(ingredient)
     upgrade_button.textContent = '$' + cost
     
-    kitchen.appendChild(item)
+    const cell = document.createElement('div')
+    cell.className = 'cell'
+    kitchen.appendChild(cell)
+    cell.appendChild(item)
+    // kitchen.appendChild(item)
     item.appendChild(item_button)
     item.appendChild(upgrade_button)
 
@@ -245,8 +254,10 @@ function buy_ingredient(ingredient) {
     if (money < calculate_buy_price(ingredient)) {return}
     money -= calculate_buy_price(ingredient)
     money_display.textContent = '$' + money
-    const buy_button = document.getElementById(`buy-${ingredient}`)
-    buy_button.remove()
+    // const buy_button = document.getElementById(`buy-${ingredient}`)
+    // buy_button.remove()
+    const cell = document.getElementById(`cell-${ingredient}`)
+    cell.remove()
     let purchasedType = ingredients_dictionary[ingredient].type
     for (let ingKey in ingredients_dictionary) {
         if (ingredients_dictionary[ingKey].type === purchasedType) {
@@ -259,6 +270,7 @@ function buy_ingredient(ingredient) {
 // passive cooking
 setInterval(() => {
     // console.log(".")
+    if (!in_game) {return}
     for (let id in ingredients_dictionary) {
         if (ingredients_dictionary[id].level <= 0 || ingredients_dictionary[id].count >= run_upgrades['max_ingredients'].value) {continue}
         ingredients_dictionary[id].bits += 1 * Math.pow(1.3, ingredients_dictionary[id].level - 1)/2 * run_upgrades['faster_cooking_multiplier'].value;
@@ -271,7 +283,7 @@ setInterval(() => {
         const ingredient_button = document.getElementById(id)
         ingredient_button.style.background = `linear-gradient(to right, rgb(64, 50, 110) 0%, rgb(64, 50, 110) ${gradient_stage}%,rgb(96, 67, 127) ${gradient_stage}%, rgb(96, 67, 127) 100%)`
     }
-    // console.log("passive cooking")
+    console.log("passive cooking")
 }, 200);
 
 
@@ -443,18 +455,26 @@ function add_ingredient(ingredient) {
     movable_item.style.left = Math.random() * 85 + '%'
     const img = document.createElement('img')
     img.src = `images/ingredients-table/${ingredient}.png`
+    // img.id = 'ingredient_on_table'
     table.appendChild(movable_item)
     movable_item.appendChild(img)
     
+    movable_item.addEventListener('touchstart', e => {
+        e.preventDefault();
+        console.log('touchstart')
+        img.className = 'item-picked'
+    }, false)
     movable_item.addEventListener('touchmove', e => {
         e.preventDefault();
         let touch = e.targetTouches[0];
-        movable_item.style.top = touch.clientY - 90 + 'px';
+        movable_item.style.top = touch.clientY - 100 + 'px';
         movable_item.style.left = touch.clientX - 100 + 'px';
         table.appendChild(movable_item)
     }, false)
     movable_item.addEventListener('touchend', e => {
         const plateRect = plate.getBoundingClientRect();
+        console.log('touchend')
+        img.className = ''
         e.preventDefault();
         if (
             plateRect.top <= parseInt(movable_item.style.top) &&
@@ -466,10 +486,10 @@ function add_ingredient(ingredient) {
             return
         }
         if (
-            tableRect.top >= parseInt(movable_item.style.top) + 80 ||
-            tableRect.bottom <= parseInt(movable_item.style.top) - 80 ||
+            tableRect.top >= parseInt(movable_item.style.top) + 135 ||
+            tableRect.bottom <= parseInt(movable_item.style.top) + 80 ||
             tableRect.left >= parseInt(movable_item.style.left) + 80 ||
-            tableRect.right <= parseInt(movable_item.style.left) - 80
+            tableRect.right <= parseInt(movable_item.style.left) + 80
         ) {
             movable_item.style.animation = 'fall ' + 0.5 / run_upgrades['animation_speed'].value + 's ease-in-out'
             ingredients_dictionary[ingredient].count -= 1
@@ -586,7 +606,7 @@ function show_emote(emote_name) {
     emote.className = 'emote'
     emote.src = 'images/emotes/' + emote_name + '.png'
     document.body.appendChild(emote)
-    emote.style.animation = 'emote-fade 1.5s ease-in-out'
+    emote.style.animation = 'emote-fade 1.55s ease-in-out'
     setTimeout(() => {
         emote.remove()
     }, 1500);
@@ -613,11 +633,12 @@ function lose() {
     setTimeout(() => {
         menu.style.display = 'flex'
         fail_container.style.display = 'flex'
-    }, 2000);
+    }, 1000);
 }
 
 
 function day_end() {
+    in_game = false
     let day_goal = 100 * day
     goal_display.textContent = `Day Goal:` + `$${day_goal}`
     if (money >= day_goal) {
@@ -663,7 +684,9 @@ function choose_upgrade (upgrade_id) {
     run_upgrades[upgrade_id].level += 1
     menu.style.display = 'none'
     upgrade_container.style.display = 'none'
-    upgrade_container.innerHTML = ''
+    let title = document.getElementById('upgrades')
+    upgrade_container.replaceChildren(title);
+    // upgrade_container.innerHTML = ''
     update_run_upgrades(upgrade_id)
     load_buttons()
     day_start()
