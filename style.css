@@ -15,6 +15,9 @@ body {
     left: 0;
 }
 
+
+
+
 /* Для скрытия панелей в iOS Safari */
 #root {
     position: fixed;
@@ -68,6 +71,8 @@ button {
     font-size: clamp(2vh, 3vw, 5vh);
     color: rgb(250, 211, 189);
 }
+
+
 h4 {
     margin: 10%
 }
@@ -128,8 +133,14 @@ h4 {
 .emote {
     position: absolute;
     display: flex;
+    top: 10%;
     left: 30%;
-    
+    min-width: 30%;
+    max-width: 30%;
+    /* max-height: 100%; */
+    /* aspect-ratio: 1/1; */
+    image-rendering: pixelated;
+    transform: scale(1.1);
 }
 .wait-timer {
     /* position: fixed; */
@@ -194,6 +205,8 @@ h4 {
     width: 54%;
     height: 45vh;
     overflow: auto;
+    /* overflow:visibl
+    e; */
 }
 
 .order {
@@ -208,11 +221,51 @@ h4 {
     overflow: auto;
     max-height: 100%;
     box-sizing: border-box;
-    overflow: hidden;
+    /* overflow: hidden; */
+    overflow:visible;
 
     min-width: 15vw;    
     
     flex: 0 1 auto;
+
+    position: relative;
+}
+.order::before {
+    content: '';
+    position: absolute;
+    left: -2.5vw;
+    top: 50%;
+    transform: translateY(70%);
+
+    /* height: 1vh; */
+    /* width: 1vh; */
+
+    /* Рисуем треугольник через border */
+    border: 2.5vw solid transparent;
+    border-right-color: rgb(64, 50, 110); /* Цвет границы (внешняя часть) */
+    border-left: 0;
+    
+    z-index: 1;
+}
+
+/* Внутренний треугольник, чтобы создать эффект "заливки" */
+.order::after {
+    content: '';
+    position: absolute;
+    left: -1.5vw; /* Немного правее, чтобы перекрыть внешнюю границу */
+    top: 50%;
+    transform: translateY(75%);
+    
+    /* height: 1vh; */
+    /* width: 1vh; */
+    
+    /* Рисуем треугольник через border */
+
+    border: 2.3vw solid transparent;
+    border-right-color: rgba(139, 70, 141); /* Цвет фона order */
+    border-left: 0;
+    
+    z-index: 2;
 }
 
 .order-item-display {
@@ -268,15 +321,24 @@ h4 {
     position: absolute;
     display: flex;
     /* right: 10px; */
+    /* justify-content: center; */
+    /* align-items: center; */
+    /* width: 30px; */
+    /* height: 30px; */
+    /* border: 1px solid rgb(36, 37, 84); */
     bottom: 54.5%;
-    height: 8vw;
+    height: 4vh;
+    max-height: 3.5vh;
+    max-width: 3.5vh;
+    padding:0px;
     /* width: 8%; */
-    padding: 10px;
+    padding: 1vh;
     background: none;
-    border: 0.5vh solid rgb(139, 70, 141, 0);
+    border: 0vh solid rgb(139, 70, 141, 0);
     image-rendering: pixelated;
     z-index: 100;
 }
+
 .counter {
     position:absolute;
     display: flex;
@@ -520,14 +582,11 @@ h4 {
 }
 
 
+button:active {
+    background: rgb(255, 74, 74);
+}
 
-/* .fail-container #fail { */
-    /* font-size: 80px; */
-    /* background: rgb(36, 37, 84); */
-    /* border: 5px, rgb(36, 37, 84); */
-    /* border-style:; */
-    /* margin: 13vw; */
-/* } */
+
 
 /* =============================== */
 /* ========= ANIMATIONS ========== */
