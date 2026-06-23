@@ -5,14 +5,16 @@ html {
 }
 
 body {
+    position: fixed;
+    top: 0;
+    left: 0;
     height: 100%;
+    width: 100%;
+    max-width: 100%;
+    max-height: 100%;
     margin: 0;
     overflow: hidden;
     touch-action: none;
-    position: fixed;
-    width: 100%;
-    top: 0;
-    left: 0;
 }
 
 
@@ -42,7 +44,7 @@ body {
 	color: rgb(250, 211, 189);
     font-family: system-ui, sans-serif;
     /* font-size: 5vw; */
-    font-size: clamp(2vh, 6vw, 3.5vh);
+    font-size: clamp(2vh, 3vh, 3.5vh);
     /* font-size: clamp(3vw, 3vh, 10px); */
     /* font-size: 30px; */
     margin: 0px;
@@ -66,12 +68,20 @@ figure {
     margin: 0px;
 }
 button {
-    background: rgb(96, 67, 127);
+    /* background: rgb(96, 67, 127); */
+    background: rgb(64, 50, 110);
+    /* background: rgb(202, 193, 210); */
     /* font-size: 40px; */
-    font-size: clamp(2vh, 3vw, 5vh);
+    font-size: clamp(2vh, 2vh, 5vh);
     color: rgb(250, 211, 189);
+    touch-action: manipulation;
+    border: 0.35vh, rgb(36, 37, 84), solid;
 }
-
+button:disabled {
+    /* background-color: rgb(41, 42, 43); */
+    border-style: dashed;
+    opacity: 0.65;
+}
 
 h4 {
     margin: 10%
@@ -97,7 +107,7 @@ h4 {
 .left-info {
     text-align: left;
     background: rgb(64, 50, 110);
-    padding: 1.5vw;
+    padding: 1.2vh;
     border: 0.3vh, rgb(36, 37, 84), solid;
     z-index: -2;
     text-wrap: nowrap;
@@ -105,16 +115,26 @@ h4 {
 .left-info #goal, .right-info #day {
     font-size: 70%;
 }
-.lives {
+.money-container {
     display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr 1fr;
+    justify-content:space-between;
+}
+.lives {
+    /* display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr); */
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
     image-rendering: pixelated;
     margin: 2%;
 }
 .heart {
     display: flex;
-    max-height: 8vh;
+    max-height: 4vh;
     max-width: 100%;
     aspect-ratio: 1/1;
     image-rendering: pixelated;
@@ -126,7 +146,7 @@ h4 {
     text-wrap: nowrap;
     text-align: right;
     background: rgb(64, 50, 110);
-    padding: 1.5vw;
+    padding: 1.2vh;
     border: 0.3vh, rgb(36, 37, 84), solid;
     z-index: 2;
 }
@@ -211,6 +231,8 @@ h4 {
 
 .order {
     display: flex;
+    top: -1000%;
+    /* display: none; */
     flex-basis: auto;
     padding: 1.5vh;
     flex-direction: column-reverse;
@@ -233,16 +255,16 @@ h4 {
 .order::before {
     content: '';
     position: absolute;
-    left: -2.5vw;
-    top: 50%;
-    transform: translateY(70%);
+    left: -3vw;
+    top: 65%;
+    /* transform: translateY(65%); */
 
     /* height: 1vh; */
     /* width: 1vh; */
 
     /* Рисуем треугольник через border */
     border: 2.5vw solid transparent;
-    border-right-color: rgb(64, 50, 110); /* Цвет границы (внешняя часть) */
+    border-right-color: rgb(64, 50, 110);
     border-left: 0;
     
     z-index: 1;
@@ -252,9 +274,9 @@ h4 {
 .order::after {
     content: '';
     position: absolute;
-    left: -1.5vw; /* Немного правее, чтобы перекрыть внешнюю границу */
-    top: 50%;
-    transform: translateY(75%);
+    left: -2vw; /* Немного правее, чтобы перекрыть внешнюю границу */
+    top: 65%;
+    /* transform: translateY(70%); */
     
     /* height: 1vh; */
     /* width: 1vh; */
@@ -294,6 +316,7 @@ h4 {
     align-items: center;
     width: 45%;
     height: 46.7vh;
+    z-index: 3;
 }
 .on-plate-bun{
     display: flex;
@@ -320,12 +343,6 @@ h4 {
 .fullscreen-button {
     position: absolute;
     display: flex;
-    /* right: 10px; */
-    /* justify-content: center; */
-    /* align-items: center; */
-    /* width: 30px; */
-    /* height: 30px; */
-    /* border: 1px solid rgb(36, 37, 84); */
     bottom: 54.5%;
     height: 4vh;
     max-height: 3.5vh;
@@ -371,19 +388,174 @@ h4 {
     /* scale: 1.5; */
 }
 
+
 /* ===== KITCHEN ===== */
+
 .kitchen {
     display: flex;
     height: 52%;
     width: 100%;
-    padding: 0.5vw;
+    max-height: 52%;
+
     background: rgb(139, 70, 141);
     border: 0.5vh solid rgb(36, 37, 84);
     box-sizing: border-box;
-    padding: 1vw;
+    padding: 1% 0%;
 }
 
-/* ===== GRID ===== */
+.kitchen .grid {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    max-height: 100%;
+    gap: 1vw;
+    overflow-x: scroll;
+    
+    /* background: rgb(0, 107, 131); */
+    /* border: 0.5vh solid rgb(36, 37, 84); */
+    box-sizing: border-box;
+}
+
+.ingredient-type-column {
+    display: grid;
+    grid-template-rows: repeat(2, 1fr);
+
+    height: 100%;
+    max-height: 100%;
+    min-height: 0%;
+    align-items: center;
+    gap: 1.5vw;
+    padding: 1.5vw;
+    margin-left: 1vw;
+    background: rgb(96, 67, 127);
+    /* border: 0.5vh solid rgb(64, 50, 110); */
+    box-sizing: border-box;
+}
+
+.buy-button-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 25%;
+    height: 100%;
+    max-height: 100%;
+    min-height: 0%;
+    /* background: rgb(172, 172, 172); */
+    /* border: 0.5vh solid rgb(36, 37, 84); */
+    box-sizing: border-box;
+    padding: 1vh;
+    image-rendering: pixelated;
+}
+.buy-button {
+    display: flex;
+    flex-direction: column-reverse;
+    /* align-items: center; */
+    justify-content: center ;
+    padding: 2.5vw;
+    height:80%;
+    background: rgb(139, 70, 141);
+    border-color: rgb(64, 50, 110);
+    box-sizing: border-box;
+
+}
+.buy-button img {
+    /* height: 90%; */
+    min-height: 0;
+    object-fit: cover;
+    image-rendering: pixelated;
+    scale: 1.5;
+}
+.ingredient-buttons-row {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    min-height: 0%;
+
+    gap: 1vw;
+    /* background: rgb(255, 255, 255); */
+    /* border: 0.5vh solid rgb(255, 255, 255); */
+    box-sizing: border-box;
+}
+.ingredient-button {
+    display: flex;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+
+    padding: 0.5vw;
+    background: rgb(96, 67, 127);
+    /* background: rgb(60, 0, 255); */
+    /* border: 0.5vh solid rgb(36, 37, 84); */
+    box-sizing: border-box;
+
+    image-rendering: pixelated;
+    aspect-ratio: 1 / 1;
+}
+.ingredient-button img {
+
+    object-fit: cover;
+    image-rendering: pixelated;
+    aspect-ratio: 1/1;
+}
+
+.upgrade-button-column {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    /* justify-content:center; */
+    /* align-items:center; */
+    /* top: 0; */
+    width: 8vh;
+    height: 100%;
+    gap: 1vw;
+    min-width: 0%;
+    /* background: rgb(26, 121, 0); */
+}
+
+.upgrade-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    grid-column: 1 / -1;
+    width: 100%;
+    height: 120%;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    
+    overflow: hidden;
+    box-sizing: border-box;
+    /* background: rgb(0, 255, 0); */
+}
+
+.upgrade-button-column img {
+    grid-row: 2;
+    grid-column: 1;
+    align-self: center;
+    justify-self: start;
+    width: 100%;
+    /* background: rgb(108, 118, 108); */
+    min-width: 0%;
+    min-height: 0%;
+    object-fit:contain;
+    image-rendering: pixelated;
+    aspect-ratio: 1/1;
+}
+
+.upgrade-level {
+    grid-row: 2;
+    grid-column: 2;
+    align-self: center;
+    justify-self: end;
+    width: 100%;
+    min-width: 0%;
+    font-size: 70%;
+    text-wrap: nowrap;
+}
+
+/* 
+
 .kitchen .grid {
     display: grid;
     width: 100%;
@@ -401,7 +573,6 @@ h4 {
     }
 }
 
-/* ===== CELL ===== */
 .cell {
     display: flex;
     flex-direction: column;
@@ -411,12 +582,8 @@ h4 {
     min-width: 0;
     min-height: 0;
     overflow: hidden;
-    /* background: rgba(255, 255, 255, 0.1); */
-    /* padding: 2%; */
     box-sizing: border-box;
 }
-
-/* ===== ITEM (контейнер для кнопок) ===== */
 .item {
     display: flex;
     flex-direction: column;
@@ -424,10 +591,7 @@ h4 {
     justify-content: center;
     width: 100%;
     height: 100%;
-    /* gap: 2%; */
 }
-
-/* ===== ITEM BUTTON ===== */
 .item-button {
     display: flex;
     align-items: center;
@@ -436,10 +600,9 @@ h4 {
     height: 75%;
     overflow: hidden;
     padding: 0;
-    /* border: rgb(64, 50, 110) solid 0.3vh; */
+    border: rgb(60, 0, 255) solid 0.3vh;
     border: none
 }
-
 .item-button img {
     width: 100%;
     height: 100%;
@@ -448,37 +611,29 @@ h4 {
     object-fit: cover;
     image-rendering: pixelated;
 }
-
-/* ===== UPGRADE BUTTON ===== */
 .upgrade-button {
     width: 100%;
     height: 23%;
-    background-color: rgb(64, 50, 110);
-    /* font-size: clamp(6px, 1.2vh, 18px); */
     text-align: center;
     border: none;
     padding: 0;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    border:none
+    border:none;
 }
-
-/* ===== BUY BUTTON ===== */
 .buy-button {
     width: 85%;
-    /* height: 75%; */
     aspect-ratio: 1/1;
     background-color: rgb(64, 50, 110);
-    /* font-size: clamp(8px, 1.5vh, 22px); */
     text-align: center;
     border: none;
     padding: 0;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    border:none
-}
+    border:none;
+} */
 
 
 .menu {
@@ -503,6 +658,7 @@ h4 {
     margin: 1.5vw;
     padding: 4vw;
     border: none;
+    touch-action: manipulation
 }
 
 .fail-container {
@@ -548,8 +704,8 @@ h4 {
     height:fit-content;
     /* height: 35%; */
     background: rgb(36, 37, 84);
-    border: 0.5vh, rgb(36, 37, 84);
-    border-style: solid;
+    /* border: 0.5vh, rgb(36, 37, 84);
+    border-style: solid; */
 }
 
 .run-upgrade-button {
@@ -563,11 +719,12 @@ h4 {
     padding: 5vw;
     /* padding-left: 10%; */
     background-color: rgb(64, 50, 110);
-    border: 0.5vh solid rgb(36, 37, 84);
+    /* border: 0.5vh solid rgb(36, 37, 84); */
     /* gap: 1%; */
+
 }
 
-.upgrade-level {
+.run-upgrade-level {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -582,8 +739,12 @@ h4 {
 }
 
 
-button:active {
-    background: rgb(255, 74, 74);
+button:enabled:active {
+    /* background: rgb(255, 74, 74); */
+    /* padding: -1vh; */
+    scale: 0.99;
+    /* margin-bottom: -1hv; */
+    transform: translateY(0.3vh);
 }
 
 
@@ -595,7 +756,7 @@ button:active {
 @keyframes slide-in-opacity {
     from {
         opacity: 0;
-        transform: translateX(-20px);        
+        transform: translateX(-8%);        
     }
     to {
         opacity: 1;
@@ -604,11 +765,12 @@ button:active {
 
 @keyframes slide-out-opacity {
     from{
-
+        opacity: 1;
     }
     to{
         opacity: 0;
-        transform: translateX(-20px);
+        /* transform: translateX(-5vw); */
+        transform: translateX(-8%);
     }
 }
 

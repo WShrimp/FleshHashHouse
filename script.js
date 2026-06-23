@@ -12,6 +12,7 @@ const table = document.getElementById('table')
 const plate = document.getElementById('plate')
 const order = document.getElementById('order')
 const money_display = document.getElementById('money');
+const money_gain_display = document.getElementById('money-gain')
 const goal_display = document.getElementById('goal');
 const day_display = document.getElementById('day');
 const time_display = document.getElementById('time');
@@ -28,8 +29,8 @@ const lives_display = document.getElementById('lives')
 const score_display = document.getElementById('max-score')
 const fullscreen_button = document.getElementById('fullscreen-button')
 
-const monster_images_count = 19
-const human_images_count = 17
+const monster_images_count = 28
+const human_images_count = 25
 const monster_images = Array.from(
     {length: monster_images_count}, 
     (_, i) => `images/monster/${i+1}.png`
@@ -47,11 +48,11 @@ const heart_image = 'images/heart.png'
 // let additional_customer_time = 0
 // let additional_day_time = 0
 // let faster_cooking_multiplier
-// let starting_money = 100
 // let click_power = 1
 
 // savable
 let day = 0
+let starting_money = 0
 let money = 50 // also in reset btw
 let min_wait_time = 3
 // let lives
@@ -92,6 +93,24 @@ ingredients_dictionary={
     "m-topping": { type: 'topping', is_monster: true, count: 0, difficulity: 200, initial_level: -1, level: -1, bits: 0},
 };
 
+function getUniqueTypes() {
+    return [...new Set(Object.values(ingredients_dictionary).map(item => item.type))];
+}
+function getIngredientsByType(type) {
+    return Object.keys(ingredients_dictionary).filter(key => 
+        ingredients_dictionary[key].type === type
+    );
+}
+function isTypeUnlocked(type) {
+    const ingredients = getIngredientsByType(type);
+    return ingredients.some(key => ingredients_dictionary[key].level >= 0);
+}
+function getAvailableIngredients() {
+    return Object.keys(ingredients_dictionary).filter(key => 
+        ingredients_dictionary[key].level >= 0
+    );
+}
+
 window.scrollTo(0, 1);
 window.addEventListener("load",function() {
     setTimeout(function(){
@@ -128,6 +147,24 @@ function toggleFullscreen() {
             document.msExitFullscreen();
         }
     }
+    setTimeout(() => {
+    // console.log('Привет через 3 секунды!');
+    reset_table()
+    }, 100);
+}
+
+function reset_table() {
+    
+    console.log("reset table")
+    table.innerHTML = ''
+    for (let ingredient in ingredients_dictionary) {
+        console.log('need to return', ingredients_dictionary[ingredient].count, ingredient)
+        for (let i=0; i<ingredients_dictionary[ingredient].count; i++){
+            console.log('returning', ingredient)
+            add_ingredient(ingredient)
+        }
+    }
+    ingredients_dictionary[ingredient].count = 0
 }
 
 if (localStorage.getItem('score')) {
@@ -160,7 +197,7 @@ function load() {
     for (ingredient in ingredients_dictionary) {
         ingredients_dictionary[ingredient].count = 0
     }
-
+    update_ingredient_buttons_state()
 
     day = JSON.parse(localStorage.getItem('day'))
     money = JSON.parse(localStorage.getItem('money'))
@@ -188,84 +225,181 @@ let get_random_upgrade  = function() {
 
 function load_buttons() {
     kitchen.innerHTML = ''
-    for (let ingredient in ingredients_dictionary) {
-        create_buttons(ingredient)
+    // for (let type in uniqueTypes) {
+    //     create_ingredient_type(type)
+        
+    // }
+    for (let type of getUniqueTypes()) {
+        console.log(type)
+        if (isTypeUnlocked(type)) {
+            create_ingredient_buttons(type)
+        } else {
+            create_buy_button(type)
+        }
     }
+    // let elements = document.getElementsByClassName('ingredient-button')
+    // console.log('elements found: ', elements)
+    // for (let element of elements) {
+    //     console.log('Element', element, ' Disabled')
+    //     console.log('element id:', element.id)
+    //     element.disabled = true
+    // }
 }
 
-function create_buttons(ingredient) {
-    if (ingredients_dictionary[ingredient].level < 0) {
-        // console.log(ingredient_type, ingredients_dictionary[ingredient].type)
-        if (ingredient_type == ingredients_dictionary[ingredient].type) {return}
-        // console.log("create buy button for ", ingredient_type)
-        const buy = document.createElement('button')
-        buy.id = `buy-${ingredient}`
-        buy.className = 'buy-button'
-        ingredient_type = ingredients_dictionary[ingredient].type
-        buy.textContent = '$' + calculate_buy_price(ingredient)
-        buy.style.order = '10'
-        const cell = document.createElement('div')
-        cell.className = 'cell'
-        cell.id = `cell-${ingredient}`
-        kitchen.appendChild(cell)
-        cell.appendChild(buy)
-        // kitchen.appendChild(buy)
-        buy.addEventListener('click', function() {
-            buy_ingredient(ingredient)
-        })
-        return
+const element = money_display;
+
+// Создаём наблюдатель
+const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+        if (mutation.type === 'characterData' || mutation.type === 'childList') {
+            console.log('Текст изменился! Новый текст:', element.textContent);
+            
+            update_buttons_state()
+
+
+        }
+    });
+});
+
+// Начинаем наблюдение
+observer.observe(element, {
+    characterData: true,   // следим за изменением текста
+    childList: true,       // следим за добавлением/удалением дочерних узлов
+    subtree: true          // следим за всеми потомками
+});
+
+function update_buttons_state() {
+    let elements = document.getElementsByClassName('upgrade-button')
+    // console.log('elements found: ', elements)
+    for (let element of elements) {
+        // console.log('element.id = ', element.id)
+        let element_id = element.id.slice(8)
+        // console.log('element id:', element_id)
+        // console.log('price of upgrade: ', calculate_price(element_id))
+        if (money < calculate_price(element_id)) {
+            element.disabled = true
+        } else {
+            element.disabled = false
+        }
     }
-    const item = document.createElement('div')
-    item.className = 'item'
-    // item.id = ingredient
-    const item_button = document.createElement('button')
-    item_button.className = 'item-button'
-    item_button.id = ingredient
-    const icon = document.createElement('img')
-    icon.src = `images/ingredients-icons/${ingredient}.png`
-    icon.className = 'item-icon'
-    item_button.appendChild(icon)
     
-    const upgrade_button = document.createElement('button')
-    upgrade_button.className = 'upgrade-button'
-    upgrade_button.id = `upgrade-${ingredient}`
-    let cost = calculate_price(ingredient)
-    upgrade_button.textContent = '$' + cost
-    
-    const cell = document.createElement('div')
-    cell.className = 'cell'
-    kitchen.appendChild(cell)
-    cell.appendChild(item)
-    // kitchen.appendChild(item)
-    item.appendChild(item_button)
-    item.appendChild(upgrade_button)
-
-    item_button.addEventListener('click', function() {
-        tap_ingredient(ingredient)
-    })
-    
-    upgrade_button.addEventListener('click', function() {
-        upgrade_ingredient(upgrade_button ,ingredient, cost)
-    })
-}
-
-
-function buy_ingredient(ingredient) {
-    if (money < calculate_buy_price(ingredient)) {return}
-    money -= calculate_buy_price(ingredient)
-    money_display.textContent = '$' + money
-    // const buy_button = document.getElementById(`buy-${ingredient}`)
-    // buy_button.remove()
-    const cell = document.getElementById(`cell-${ingredient}`)
-    cell.remove()
-    let purchasedType = ingredients_dictionary[ingredient].type
-    for (let ingKey in ingredients_dictionary) {
-        if (ingredients_dictionary[ingKey].type === purchasedType) {
-            ingredients_dictionary[ingKey].level += 1
-            create_buttons(ingKey)
+    elements = document.getElementsByClassName('buy-button')
+    // console.log('buy elements found: ', elements)
+    for (let element of elements) {
+        // console.log('buy element.id = ', element.id)
+        element_id = element.id.slice(4)
+        // console.log('buy element id:', element_id)
+        // console.log('price of buy: ', calculate_buy_price(element_id))
+        if (money < calculate_buy_price(element_id)) {
+            element.disabled = true
+        } else {
+            element.disabled = false
         }
     }
 }
+function update_ingredient_buttons_state() {
+    console.log('update ingredients buttons')
+    let elements = document.getElementsByClassName('ingredient-button')
+    console.log('elements: ', elements)
+    for (let element of elements) {
+        console.log('element.id = ', element.id)
+        // let element_id = element.id.slice(8)
+        console.log ('count: ', ingredients_dictionary[element.id].count )
+        if (ingredients_dictionary[element.id].count >= run_upgrades['max_ingredients'].value) {
+            element.disabled = true
+        } else {
+            element.disabled = false
+        }
+    }}
+
+function create_ingredient_buttons(type) {
+    console.log('creating buttons for', type)
+    const ingredient_type_column = document.createElement('div')
+    ingredient_type_column.className = 'ingredient-type-column'
+    kitchen.appendChild(ingredient_type_column)
+    
+    for (let ingredient of getIngredientsByType(type)) {
+        
+        const ingredient_buttons_row = document.createElement('div')
+        ingredient_buttons_row.className = 'ingredient-buttons-row'
+        ingredient_type_column.appendChild(ingredient_buttons_row)
+
+        const ingredient_button = document.createElement('button')
+        ingredient_button.className = 'ingredient-button'
+        ingredient_button.id = ingredient
+        ingredient_buttons_row.appendChild(ingredient_button)
+        ingredient_button.addEventListener('click', function() {
+            tap_ingredient(ingredient)
+        })
+
+        const upgrade_button_column = document.createElement('div')
+        upgrade_button_column.className = 'upgrade-button-column'
+        ingredient_buttons_row.appendChild(upgrade_button_column)
+        // ingredient_buttons_row.textContent = 'x0'
+
+        const upgrade_button = document.createElement('button')
+        upgrade_button.className = 'upgrade-button'
+        upgrade_button.id = `upgrade-${ingredient}`
+        let cost = calculate_price(ingredient)
+        upgrade_button.textContent = '$' + cost
+        upgrade_button_column.appendChild(upgrade_button)
+        
+        const cook_image = document.createElement('img')
+        cook_image.src = 'images/ingredients-icons/cook.png'
+        upgrade_button_column.appendChild(cook_image)
+        
+        const upgrade_level = document.createElement('div')
+        upgrade_level.className = 'upgrade-level'
+        upgrade_level.textContent = 'x' + ingredients_dictionary[ingredient].level
+        upgrade_button_column.appendChild(upgrade_level)
+        
+        upgrade_button.addEventListener('click', function() {
+            upgrade_ingredient(upgrade_button, upgrade_level, ingredient, cost)
+        })
+
+        const ingredient_button_image = document.createElement('img')
+        ingredient_button_image.src = 'images/ingredients-icons/' + ingredient + '.png'
+        ingredient_button.appendChild(ingredient_button_image)
+    }
+}
+
+function create_buy_button(type) {
+    const buy_button_container = document.createElement('div')
+    buy_button_container.className = 'buy-button-container'
+    buy_button_container.id = `buy-${type}`
+    buy_button_container.style.order = '10'
+    kitchen.appendChild(buy_button_container)
+    const buy_button = document.createElement('button')
+    buy_button.id = `buy-${type}`
+    buy_button.className = 'buy-button'
+    buy_button.textContent = '$' + calculate_buy_price(type)
+    buy_button.style.order = '10'
+    
+    buy_button_container.appendChild(buy_button)
+
+    const buy_button_image = document.createElement('img')
+    buy_button_image.src = 'images/ingredients-order/' + type + '.png'
+    buy_button.appendChild(buy_button_image)
+
+    buy_button.addEventListener('click', function() {
+        buy_ingredient(type)
+    })
+}
+
+function buy_ingredient(type) {
+    if (money < calculate_buy_price(type)) {return}
+    money -= calculate_buy_price(type)
+    money_display.textContent = '$' + money
+    // const buy_button = document.getElementById(`buy-${type}`)
+    // buy_button.remove()
+    for (let ingredient of getIngredientsByType(type)){
+        ingredients_dictionary[ingredient].level += 1
+    }
+    const buy_button_container = document.getElementById(`buy-${type}`)
+    buy_button_container.remove()
+    create_ingredient_buttons(type)
+}
+
 
 // passive cooking
 setInterval(() => {
@@ -275,7 +409,7 @@ setInterval(() => {
         if (ingredients_dictionary[id].level <= 0 || ingredients_dictionary[id].count >= run_upgrades['max_ingredients'].value) {continue}
         ingredients_dictionary[id].bits += 1 * Math.pow(1.3, ingredients_dictionary[id].level - 1)/2 * run_upgrades['faster_cooking_multiplier'].value;
         if (ingredients_dictionary[id].bits >= ingredients_dictionary[id].difficulity) {
-            ingredients_dictionary[id].count += 1;
+            // ingredients_dictionary[id].count += 1;
             ingredients_dictionary[id].bits -= ingredients_dictionary[id].difficulity;
             add_ingredient(id)
         }
@@ -390,6 +524,7 @@ function fill_order() {
     order.style.animation = 'fade-out ' + 0.3 / run_upgrades['animation_speed'].value + 's ease-in-out'
 }
 order.addEventListener('animationend', function(e) {
+    order.style.top = '0'
     if (e.animationName == 'fade-out') {
         order.innerHTML = ""
         full_order = []
@@ -417,9 +552,8 @@ function tap_ingredient(ingredient) {
     if (ingredients_dictionary[ingredient].count >= run_upgrades['max_ingredients'].value) {return}
     ingredients_dictionary[ingredient].bits += 10 * run_upgrades['click_power'].value
     const ingredient_button = document.getElementById(ingredient)
-    
     if (ingredients_dictionary[ingredient].bits >= ingredients_dictionary[ingredient].difficulity) {
-        ingredients_dictionary[ingredient].count += 1;
+        // ingredients_dictionary[ingredient].count += 1;
         ingredients_dictionary[ingredient].bits -= ingredients_dictionary[ingredient].difficulity;
         add_ingredient(ingredient)
     }
@@ -427,11 +561,12 @@ function tap_ingredient(ingredient) {
     ingredient_button.style.background = `linear-gradient(to right, rgb(64, 50, 110) 0%, rgb(64, 50, 110) ${gradient_stage}%,rgb(96, 67, 127) ${gradient_stage}%, rgb(96, 67, 127) 100%)`
 }
 
-function upgrade_ingredient(upgrade_button, ingredient, cost){
+function upgrade_ingredient(upgrade_button, upgrade_level, ingredient, cost){
     if (money < cost) {return}
     money -= cost
     ingredients_dictionary[ingredient].level += 1
     cost = calculate_price(ingredient)
+    upgrade_level.textContent = 'x' + ingredients_dictionary[ingredient].level
     money_display.textContent = '$' + money
     upgrade_button.textContent = '$' + cost
 }
@@ -439,7 +574,8 @@ function upgrade_ingredient(upgrade_button, ingredient, cost){
 function calculate_price(ingredient) {
     return Math.round ((ingredients_dictionary[ingredient].difficulity * 1.7 + ingredients_dictionary[ingredient].level * 20)/5)
 }
-function calculate_buy_price(ingredient) {
+function calculate_buy_price(type) {
+    let ingredient = getIngredientsByType(type)[0]
     return Math.round(Math.pow(ingredients_dictionary[ingredient].difficulity, 1.3)/5)
 }
 
@@ -447,10 +583,14 @@ function calculate_buy_price(ingredient) {
 // add_ingredient('m-meat')
 // add ingredient on table
 function add_ingredient(ingredient) {
+    ingredients_dictionary[ingredient].count += 1;
+    update_ingredient_buttons_state()
+
     const tableRect = table.getBoundingClientRect();
     const movable_item = document.createElement('div');
     movable_item.className = "ingredient_item"
-    movable_item.style.top = tableRect.top + Math.random() * tableRect.height * 0.8 + 'px'
+    console.log('putting ingredient ', ingredient, ' on plate: ', tableRect)
+    movable_item.style.top = tableRect.top + Math.random() * tableRect.height * 0.7 + 'px'
     // movable_item.style.top = tableRect.top + Math.random() * 240 + 'px'
     movable_item.style.left = Math.random() * 85 + '%'
     const img = document.createElement('img')
@@ -458,6 +598,8 @@ function add_ingredient(ingredient) {
     // img.id = 'ingredient_on_table'
     table.appendChild(movable_item)
     movable_item.appendChild(img)
+    // ingredient_on_table.push(ingredient)
+    // console.log(ingredient_on_table)
     const imgsize = img.clientHeight;
     
     movable_item.addEventListener('touchstart', e => {
@@ -492,6 +634,7 @@ function add_ingredient(ingredient) {
         ) {
             movable_item.style.animation = 'fall ' + 0.5 / run_upgrades['animation_speed'].value + 's ease-in-out'
             ingredients_dictionary[ingredient].count -= 1
+            update_ingredient_buttons_state()
             movable_item.addEventListener('animationend', e => {
                 e.preventDefault();
                 movable_item.remove()
@@ -504,6 +647,7 @@ function add_ingredient(ingredient) {
 function place_on_plate(movable_item, ingredient) {
     table.removeChild(movable_item)
     ingredients_dictionary[ingredient].count -= 1
+    update_ingredient_buttons_state()
     
     const ingredient_on_plate = document.createElement('img')
     ingredient_on_plate.src = `images/ingredients-plate/${ingredient}.png`
@@ -554,17 +698,35 @@ function give_plate(fail) {
     bun_top.className = 'on-plate'
     bun_top.src = `images/ingredients-plate/bun-top.png`
     plate.appendChild(bun_top)
-    
+    let money_for_plate = 0
+    let money_gain
+    money_gain_display.style.animation = ''
     if (fail == 0) {
+        show_emote('like')
         // console.log("Correct!")
         for (let i = 0; i < full_plate.length; i++) {
-            money += Math.round((ingredients_dictionary[full_plate[i]].difficulity - 30) / 4 * run_upgrades['money_multiplier'].value)
-            money_display.textContent = '$' + money.toString()
+            money_for_plate += Math.round((ingredients_dictionary[full_plate[i]].difficulity - 30) / 4)
         }
+        money_gain = Math.round(money_for_plate * run_upgrades['money_multiplier'].value)
+        money += money_gain
+        
+        money_display.textContent = '$' + money.toString()
+        
+        money_gain_display.textContent = '+' + money_gain
+        // money_display.appendChild(money_gain_display)
+        // money_gain_display.style.opacity = '1'
+        void money_gain_display.offsetHeight;
+        money_gain_display.style.color = 'rgb(172, 206, 112)'
+        money_gain_display.style.animation = 'slide-out-opacity 2s ease-in forwards'
     }
     if (fail == 1) {
         // console.log("It's a monster, no money")
-        money -= 10
+        money_gain = Math.round(-10 * day * Math.random()*4)
+        money -= money_gain
+        money_gain_display.textContent = money_gain
+        void money_gain_display.offsetHeight;
+        money_gain_display.style.color = 'rgb(204, 67, 105)'
+        money_gain_display.style.animation = 'slide-out-opacity 2s ease-in forwards'
         show_emote('eww')
         money_display.textContent = '$' + money.toString()
         if (money < 0) {
@@ -605,12 +767,15 @@ function show_emote(emote_name) {
     emote.className = 'emote'
     emote.src = 'images/emotes/' + emote_name + '.png'
     document.body.appendChild(emote)
-    emote.style.animation = 'emote-fade 1.55s ease-in-out'
+    emote.style.animation = 'emote-fade 1.85s ease-in-out'
     setTimeout(() => {
         emote.remove()
-    }, 1500);
+    }, 1800);
 }
 
+// money_gain_display.addEventListener('animationend', function(e) {
+//     money_gain_display.textContent = ''
+// })
 
 plate.addEventListener('animationend', function(e) {
     if (e.animationName == 'slide-out') {
@@ -667,7 +832,7 @@ function show_upgrades() {
             // console.log("adding level display to: ", run_upgrades[random_upgrade].name)
             // console.log("type: ", run_upgrades[random_upgrade].type)
             let upgrade_level = document.createElement('div')
-            upgrade_level.className = 'upgrade-level'
+            upgrade_level.className = 'run-upgrade-level'
             upgrade_level.textContent = run_upgrades[random_upgrade].level + '/' + run_upgrades[random_upgrade].max
             run_upgrade_button.appendChild(upgrade_level)
         }
@@ -728,16 +893,16 @@ function save_found() {
         load_buttons()
         day_start()
     })
-    const delete_button = document.createElement('button')
-    delete_button.id = 'delete-button'
-    delete_button.className = 'menu-button'
-    delete_button.textContent = 'True Reset (deletes data)'
-    menu_container.appendChild(delete_button)
-    delete_button.addEventListener('click', function() {
-        delete_data()
-        delete_button.remove()
-        continue_button.remove()
-    })
+    // const delete_button = document.createElement('button')
+    // delete_button.id = 'delete-button'
+    // delete_button.className = 'menu-button'
+    // delete_button.textContent = 'True Reset (deletes data)'
+    // menu_container.appendChild(delete_button)
+    // delete_button.addEventListener('click', function() {
+    //     delete_data()
+    //     delete_button.remove()
+    //     continue_button.remove()
+    // })
 }
 
 again_button.addEventListener('click', function() {
@@ -757,9 +922,10 @@ start_button.addEventListener('click', function() {
 function reset(full) {
     if (full) {
         day = 0
-        money = 50
+        money = starting_money
         ingredient_type = ''
         kitchen.innerHTML = ''
+        table.innerHTML = ''
         for (run_upgrade in run_upgrades) {
             run_upgrades[run_upgrade].level = 0
             run_upgrades[run_upgrade].value = run_upgrades[run_upgrade].starting_value
@@ -769,6 +935,7 @@ function reset(full) {
             ingredients_dictionary[ingredient].bits = 0
             ingredients_dictionary[ingredient].count = 0
         }
+        update_ingredient_buttons_state()
     }
     money_display.textContent = '$' + money.toString()
     plate.innerHTML = ""
