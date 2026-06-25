@@ -1137,6 +1137,7 @@ function save_found() {
         load_buttons()
         reset_table()
         day_start()
+        creatre_trays()
         // creatre_trays()
     })
 }
@@ -1162,6 +1163,7 @@ function reset(full) {
         ingredient_type = ''
         kitchen.innerHTML = ''
         table.innerHTML = ''
+        // table_container.innerHTML = ''
 
         in_game = false
         plate_given = false
@@ -1171,7 +1173,6 @@ function reset(full) {
         time_display.textContent = '0:00'
         // money_display.textContent = '$0'
 
-        // table_container.innerHTML = ''
         for (run_upgrade in run_upgrades) {
             run_upgrades[run_upgrade].level = 0
             run_upgrades[run_upgrade].value = run_upgrades[run_upgrade].starting_value
