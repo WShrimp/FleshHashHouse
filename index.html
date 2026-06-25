@@ -15,10 +15,18 @@
             <h4 id="fail">FAIL</h4>
             <button class="menu-button" id="again-button">Again</button>
         </section>
-        <section class = menu-container>
-            <h4 id="max-score"
-            >MAX SCORE: DAY 1</h4>
-            <button class="menu-button" id="start-button">New Game</button>
+        <section class = play-container>
+            <h1 class="name">FLESH HASH HOUSE</h1>
+            <div class="play-subcontainer">
+                <h4 id="max-score">MAX SCORE: DAY 1</h4>
+                <div class="description">
+                    Chose right ingredients to make burgers for humans and monsters
+                    <br />(mobile only)
+                </div>
+                <button class="menu-button" id="start-button">New Game</button>
+            </div>
+            <!-- Serve humans and monsters some home-made food. -->
+            <!-- Don't let humans know you also serve monsters -->
         </section>
         <section class = "upgrade-container">
             <h4 id="upgrades">UPGRADES</h4>
@@ -30,9 +38,12 @@
             <div class="left-info">
                 <div class="money-container">
                     <div id="money">$50</div>
-                    <div id="money-gain">0</div>
+                    <div id="money-gain"></div>
                 </div>
-                <div id="goal">Day Goal: $100</div>
+                <div class="goal_container">
+                    <div id="goal"> Day Goal: $100 </div>
+                    <button id="day-goal-pay"> Pay Goal </button>
+                </div>
             </div>
         </div>
         <div class="lives" id="lives"></div>
@@ -62,7 +73,10 @@
     <div class="counter">
     </div>
     <section class="bottom-panel">
-        <section class="table" id="table"></section>
+        <section class="table-container">
+            <div class="tray-container"></div>
+            <div class="table" id="table"></div>
+        </section>
      
         <section class="kitchen">
             <div class="grid">
