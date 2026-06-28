@@ -1531,18 +1531,31 @@ function reset(full) {
 
 let away_timer
 
+function handleAway() {
+    if (in_game) {
+        music.pause()
+        away_timer = setTimeout(() => {
+            location.reload()
+        }, 10000)
+    }
+}
+
+function handleReturn() {
+    clearTimeout(away_timer)
+    if (in_game && music.paused) {
+        music.play().catch(() => {})
+    }
+}
+
 document.addEventListener('visibilitychange', function() {
     if (document.hidden) {
-        if (in_game) {
-            music.pause()
-            away_timer = setTimeout(() => {
-                location.reload()
-            }, 10000)
-        }
+        handleAway()
     } else {
-        clearTimeout(away_timer)
-        if (in_game && music.paused) {
-            music.play().catch(() => {})
-        }
+        handleReturn()
     }
 })
+
+window.addEventListener('pagehide', handleAway)
+window.addEventListener('pageshow', handleReturn)
+window.addEventListener('blur', handleAway)
+window.addEventListener('focus', handleReturn)
