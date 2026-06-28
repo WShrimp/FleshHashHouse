@@ -13,16 +13,21 @@ const day_display = document.getElementById('day');
 const time_display = document.getElementById('time');
 const customer_image = document.querySelector('.customer figure img');
 const kitchen = document.querySelector('.kitchen .grid');
+const lives_display = document.getElementById('lives')
+const score_display = document.getElementById('max-score')
+
 const menu = document.querySelector('.menu');
 const again_button = document.getElementById('again-button');
 const start_button = document.getElementById('start-button');
 const wait_timer = document.getElementById('wait-timer');
+
 const fail_container = document.querySelector('.fail-container');
 const play_container = document.querySelector('.play-container')
 const play_subcontainer = document.querySelector('.play-subcontainer')
 const upgrade_container = document.querySelector('.upgrade-container')
-const lives_display = document.getElementById('lives')
-const score_display = document.getElementById('max-score')
+const how_to_play_container = document.querySelector('.how-to-play-container')
+const how_to_play_image = document.getElementById('how-to-play-image')
+
 
 const fullscreen_button = document.getElementById('fullscreen-button')
 const language_button = document.getElementById('language')
@@ -30,6 +35,7 @@ const sound_button = document.getElementById('sound')
 const music_button = document.getElementById('music')
 const radio = document.getElementById('radio')
 const music_name = document.getElementById('music-name')
+const how_to_play_button = document.getElementById('how-to-play')
 
 const monster_images_count = 31
 const human_images_count = 29
@@ -66,6 +72,8 @@ let min_wait_time = 4
 // temporary
 let day_min_time = 3 //3
 
+let help_open = false
+
 let sounds_on = true
 let music = new Audio()
 let buttons_audio = new Audio()
@@ -101,7 +109,8 @@ const translations = {
         goal_paid: 'Цель Достигнута',
         max_score: 'РЕКОРД: ДЕНЬ ',
 
-        description: 'Готовьте и собирайте бургеры из подходящих ингредиентов для людей и монстров'
+        description: 'Готовьте и собирайте бургеры из подходящих ингредиентов для людей и монстров',
+        if_windows: 'Чтобы играть на пк попробуйте f12, затем shift+ctrl+m'
     },
     en: {
         start: 'New Game',
@@ -116,6 +125,7 @@ const translations = {
         max_score: 'MAX SCORE: DAY ',
 
         description: 'Chose right ingredients to make burgers for humans and monsters',
+        if_windows: 'To play from pc you can try f12, then shift+ctrl+m'
     }
 }
 
@@ -167,6 +177,15 @@ language_button.addEventListener('click', function() {
     } else {
         language = 'ru'
     }
+
+    if (help_open) {
+        if (language == 'ru') {
+            how_to_play_image.src = 'images/how_to_play_ru.jpg'
+        } else {
+            how_to_play_image.src = 'images/how_to_play_en.jpg'
+        }
+    }
+    // help_open = true
     // console.log('Language changed: ', language)
     localStorage.setItem('language', language)
     update_html_texts()
@@ -298,7 +317,25 @@ music_button.addEventListener('click', function() {
         music_button.firstElementChild.src = 'images/music_icon_off.png'
     }
 })
+how_to_play_button.addEventListener('click', function() {
+    if (help_open) {
+        how_to_play_container.style.display = 'none'
+        help_open = false
+        return
+    }
+    how_to_play_container.style.display = 'flex'
 
+    if (language == 'ru') {
+        how_to_play_image.src = 'images/how_to_play_ru.jpg'
+    } else {
+        how_to_play_image.src = 'images/how_to_play_en.jpg'
+    }
+    help_open = true
+})
+how_to_play_container.addEventListener('click', function(){
+    help_open = false
+    how_to_play_container.style.display = 'none'
+})
 
 
 let tray_buy_button_exists = false
@@ -1335,7 +1372,13 @@ function show_upgrades() {
         let run_upgrade_button = document.createElement('button')
         run_upgrade_button.className = 'run-upgrade-button'
         run_upgrade_button.id = random_upgrade
-        run_upgrade_button.textContent = t(random_upgrade)
+
+        let run_upgrade_text = document.createElement('span')
+        run_upgrade_text.setAttribute('data-i18n', random_upgrade)
+        run_upgrade_text.textContent = t(random_upgrade)
+
+        run_upgrade_button.appendChild(run_upgrade_text)
+
         // run_upgrade_button.textContent = run_upgrades[random_upgrade].name
         // run_upgrade_button.textContent = '[' + run_upgrades[random_upgrade].level + '] — ' + run_upgrades[random_upgrade].name
         upgrade_container.appendChild(run_upgrade_button)
@@ -1382,16 +1425,10 @@ function update_run_upgrades(upgrade_id) {
         run_upgrades[upgrade_id].level -= 1
         money += run_upgrades[upgrade_id].value
     }
-    // if (run_upgrades[upgrade_id].type == 'lives') {
-    //     run_upgrades[upgrade_id].level -= 1
-    //     run_upgrades[upgrade_id].value += 1
-    // }
-    // console.log('run upgrade', upgrade_id, 'updated to', run_upgrades[upgrade_id].value)
 }
 
 
 function save_found() {
-    // score_display.innerText = 'MAX SCORE: DAY ' + score
     menu.style.display = 'flex'
     play_subcontainer.style.display = 'flex'
     const continue_button = document.createElement('button')
@@ -1454,7 +1491,6 @@ function reset(full) {
         ingredient_type = ''
         kitchen.innerHTML = ''
         table.innerHTML = ''
-        // table_container.innerHTML = ''
         tray_buy_button_exists = false
         in_game = false
         plate_given = false
@@ -1462,7 +1498,6 @@ function reset(full) {
         full_plate = []
 
         time_display.textContent = '0:00'
-        // money_display.textContent = '$0'
 
         for (run_upgrade in run_upgrades) {
             run_upgrades[run_upgrade].level = 0
