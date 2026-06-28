@@ -388,7 +388,8 @@ button:disabled {
     box-shadow: none;
     image-rendering: pixelated;
 }
-.settings-panel button {    display: flex;
+.settings-panel button {    
+    display: flex;
     height: 3.6dvh;
     width: 3.6dvh;
     min-height: 3.6dvh;
@@ -403,6 +404,15 @@ button:disabled {
     z-index: 100;
     box-shadow: none;
     image-rendering: pixelated;
+    overflow: visible;
+}
+.settings-panel button img { 
+    height: 1.6dvh;
+    width: 1.6dvh;
+    min-height: 1.6dvh;
+    min-width: 1.6dvh;
+    max-height: 1.6dvh;
+    max-width: 1.6dvh;
 }
 
 .counter {
