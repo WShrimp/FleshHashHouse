@@ -392,10 +392,10 @@ button:disabled {
     /* position: relative; */
     display: flex;
     height: 4dvh;
-    min-height: 3.6dvh;
-    min-width: 3.6dvh;
-    max-height: 3.6dvh;
-    max-width: 3.6dvh;
+    min-height: 4dvh;
+    min-width: 4dvh;
+    max-height: 4dvh;
+    max-width: 4dvh;
     aspect-ratio: 1/1;
     padding:0px;
     padding: 1dvh;
@@ -405,21 +405,7 @@ button:disabled {
     box-shadow: none;
     image-rendering: pixelated;
 }
-/* .fullscreen-button { */
-    /* position: absolute;
-    display: flex;
-    bottom: 54.5%;
-    height: 4dvh;
-    max-height: 3.5dvh;
-    max-width: 3.5dvh;
-    padding:0px;
-    padding: 1dvh;
-    background: none;
-    border: 0dvh solid rgb(139, 70, 141, 0);
-    z-index: 100;
-    box-shadow: none;
-    image-rendering: pixelated; */
-/* } */
+/* .settings-panel button image { */
 
 .counter {
     position:absolute;
