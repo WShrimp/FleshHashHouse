@@ -923,6 +923,9 @@ function day_start(){
     play_music()
     // console.log("update hearts to: ", run_upgrades['lives'].value)
     update_hearts()
+    customer_image.style.animation = ''
+    customer_image.style.display = 'block'
+    plate.style.animation = ''
     plate.style.display = 'flex'
     plate.innerHTML = ""
 
@@ -1520,4 +1523,26 @@ function reset(full) {
     plate_given = false
     clearInterval(timer)
     wait_timer.style.animation = ''
+    plate.style.animation = ''
+    plate.style.display = 'none'
+    customer_image.style.animation = ''
+    customer_image.style.display = 'none'
 }
+
+let away_timer
+
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+        if (in_game) {
+            music.pause()
+            away_timer = setTimeout(() => {
+                location.reload()
+            }, 10000)
+        }
+    } else {
+        clearTimeout(away_timer)
+        if (in_game && music.paused) {
+            music.play().catch(() => {})
+        }
+    }
+})
