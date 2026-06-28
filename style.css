@@ -118,7 +118,7 @@ button:disabled {
     z-index: -2;
     text-wrap: nowrap;
 }
-.left-info #goal, .right-info #day {
+.left-info #goal, #goal-text, .right-info #day, #day-text{
     font-size: 70%;
 }
 #day-goal-pay {
@@ -128,7 +128,9 @@ button:disabled {
     margin: 2dvh;
     margin-left: -0.3dvh;
     width: 80%;
+    /* max-width: 90%; */
     height: 6.5dvh;
+    text-wrap: wrap;
     justify-content: center;
     align-items: center;
 }
@@ -364,15 +366,22 @@ button:disabled {
     height: 53%;
     max-height: 53%;
 }
-.fullscreen-button {
+
+
+
+.settings-panel {
     position: absolute;
     display: flex;
+    flex-direction: column-reverse;
     bottom: 54.5%;
     height: 4dvh;
-    max-height: 3.5dvh;
-    max-width: 3.5dvh;
-    padding:0px;
-    /* width: 8%; */
+    right: 0%;
+    height: auto;
+    width: auto;
+    /* max-height: 3.5dvh; */
+    /* max-width: 3.5dvh; */
+    /* padding:0px; */
+    /* gap: 1vh; */
     padding: 1dvh;
     background: none;
     border: 0dvh solid rgb(139, 70, 141, 0);
@@ -380,6 +389,36 @@ button:disabled {
     box-shadow: none;
     image-rendering: pixelated;
 }
+.settings-button {
+    /* position: relative; */
+    display: flex;
+    /* bottom: 54.5%; */
+    height: 4dvh;
+    max-height: 3.6dvh;
+    max-width: 3.6dvh;
+    padding:0px;
+    padding: 1dvh;
+    background: none;
+    border: 0dvh solid rgb(139, 70, 141, 0);
+    z-index: 100;
+    box-shadow: none;
+    image-rendering: pixelated;
+}
+/* .fullscreen-button { */
+    /* position: absolute;
+    display: flex;
+    bottom: 54.5%;
+    height: 4dvh;
+    max-height: 3.5dvh;
+    max-width: 3.5dvh;
+    padding:0px;
+    padding: 1dvh;
+    background: none;
+    border: 0dvh solid rgb(139, 70, 141, 0);
+    z-index: 100;
+    box-shadow: none;
+    image-rendering: pixelated; */
+/* } */
 
 .counter {
     position:absolute;
@@ -479,13 +518,13 @@ button:disabled {
 }
 .tray-ingredient-holder-container img {
     /* min-width: 8dvh; */
+    position: relative;
     align-self: center;
     /* justify-self:center; */
     width: 90%;
     max-width: 8dvh;
     max-height: 5dvh;
     overflow:visible;
-    position: relative;
     display: flex;
     object-fit: cover;
     /* margin-top: -78%; */
@@ -798,6 +837,7 @@ button:disabled {
 
 .menu-button {
     width: 70%;
+    min-width: 70%;
     /* min-width: fit-content; */
     /* height: 120px; */
     /* font-size: 50px; */
@@ -854,6 +894,11 @@ button:disabled {
     /* height: 35%; */
     background: rgb(64, 50, 110);
 }
+.play-subcontainer .max-score-container {
+    text-wrap: nowrap;
+    display: flex;
+    gap: 1dvh
+}
 .play-subcontainer .description {
     margin: 3dvh;
     margin-top: 1dvh;
@@ -862,6 +907,13 @@ button:disabled {
     /* border: 0.4dvh, rgb(64, 50, 110), solid; */
     /* padding: 5%; */
     /* margin: 2dvh, 2dvh, 2dvh, 2dvh; */
+}
+#continue-button{
+    width: fit-content;
+    display: flex;
+    gap: 0.5dvh;
+    justify-content: center;
+    text-wrap: nowrap;
 }
 .upgrade-container {
     align-self: center;
@@ -924,6 +976,22 @@ button:disabled {
     /* border: 0.5dvh, rgb(36, 37, 84); */
     /* border-style: solid; */
 }
+
+#radio {
+    opacity: 0;
+    position: absolute;
+    bottom: 0.5dvh;
+    left: 1dvh;
+    gap: 1.5dvh;
+    /* display: flex; */
+    font-size: 1.3dvh;
+    image-rendering: pixelated;
+}
+#radio img {
+    height: 2dvh;
+}
+/* #music-name { */
+/* } */
 
 button:enabled:active {
     /* background: rgb(255, 74, 74); */

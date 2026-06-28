@@ -12,27 +12,28 @@
     <body>
     <section class = "menu"> 
         <section class = fail-container>
-            <h4 id="fail">FAIL</h4>
-            <button class="menu-button" id="again-button">Again</button>
+            <h4 id="fail" data-i18n="fail">FAIL</h4>
+            <button class="menu-button" id="again-button" data-i18n="again">Again</button>
         </section>
         <div class="play-container-background">
             <section class = play-container>
                 <h1 class="name">FLESH HASH HOUSE</h1>
                 <div class="play-subcontainer">
-                    <h4 id="max-score">MAX SCORE: DAY 1</h4>
-                    <div class="description">
+                    <div class="max-score-container">
+                        <h4 data-i18n="max_score">MAX SCORE: DAY</h4>
+                        <h4 id="max-score"></h4>
+                    </div>
+                    <!-- <h4 id="max-score" data-i18n="max_score">MAX SCORE: DAY 1</h4> -->
+                    <div class="description"  data-i18n="description">
                         Chose right ingredients to make burgers for humans and monsters
                         <br />(mobile only)
                     </div>
-                    <button class="menu-button" id="start-button">New Game</button>
+                    <button class="menu-button" id="start-button" data-i18n="start">New Game</button>
                 </div>
-                <!-- Serve humans and monsters some home-made food. -->
-                <!-- Don't let humans know you also serve monsters -->
             </section>
         </div>
         <section class = "upgrade-container">
-            <h4 id="upgrades">UPGRADES</h4>
-            <!-- <button class="menu-button" id="start-button">Start</button> -->
+            <h4 id="upgrades" data-i18n="upgrades">UPGRADES</h4>
         </section>
     </section>
     <section class="top-bar">
@@ -43,14 +44,23 @@
                     <div id="money-gain"></div>
                 </div>
                 <div class="goal_container">
-                    <div id="goal"> Day Goal: $100 </div>
-                    <button id="day-goal-pay"> Pay Goal </button>
+                    <div class="goal_subcontainer">
+                        <span id="goal-text" data-i18n="goal">
+                            Day Goal:
+                        </span>
+                        <span id="goal"> $100 </span>
+                    </div>
+                    <button id="day-goal-pay" data-i18n="pay_goal"> Pay Goal </button>
                 </div>
             </div>
         </div>
         <div class="lives" id="lives"></div>
         <div class="right-info">
-            <div id="day">Day: 0</div>
+            <div class="day-container">
+                <span id="day-text" data-i18n="day">Day: </span>
+                <span id="day">0</span>
+            </div>
+            <!-- <div id="day" data-i18n="day">Day: 0</div> -->
             <div id="time">3:00</div>
         </div>
     </section>
@@ -68,9 +78,20 @@
 
     <section class="plate" id="plate"></section>
     
-    <button class="fullscreen-button" id="fullscreen-button">
-        <img src="images/fullscreen.png" alt="fullscreen">
-    </button>
+    <section class="settings-panel">
+        <button class="settings-button" id="fullscreen-button">
+            <img src="images/fullscreen_icon.png" alt="fullscreen">
+        </button>
+        <button class="settings-button" id = "language">
+            <img src="images/language_icon.png">
+        </button id>
+        <button class="settings-button" id="sound">
+            <img src="images/sound_icon.png">
+        </button>
+        <button class="settings-button" id = "music">
+            <img src="images/music_icon.png">
+        </button>
+    </section>
 
     <div class="counter">
     </div>
@@ -87,6 +108,10 @@
         </section>
     </section>
 
+    <div id="radio">
+        <img id="radio-icon" src="images/radio.png">
+        <span id="music-name"></span>
+    </div>
 
     <script src="script.js"></script>
 </body>
