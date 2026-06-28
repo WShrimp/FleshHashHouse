@@ -1537,20 +1537,17 @@ let away_timer
 let away_triggered = false
 
 function handleAway(source) {
-    // console.log('handleAway from: ' + source + ' in_game: ' + in_game + ' away_triggered: ' + away_triggered)
     if (in_game && !away_triggered) {
         away_triggered = true
         music.pause()
-        // console.log('starting away_timer')
         away_timer = setTimeout(() => {
-            console.log('RELOADING')
             location.reload()
         }, 10000)
     }
 }
 
 function handleReturn(source) {
-    console.log('handleReturn from: ' + source + ' away_triggered: ' + away_triggered)
+    if (!away_triggered) return  // нечего сбрасывать
     away_triggered = false
     clearTimeout(away_timer)
     if (in_game && music.paused) {
@@ -1570,9 +1567,7 @@ window.addEventListener('pagehide', function() {
     handleAway('pagehide')
 })
 
-window.addEventListener('pageshow', function() {
-    handleReturn('pageshow')
-})
+// pageshow убираем — он фантомно срабатывает при уходе
 
 window.addEventListener('blur', function() {
     handleAway('blur')
@@ -1581,14 +1576,3 @@ window.addEventListener('blur', function() {
 window.addEventListener('focus', function() {
     handleReturn('focus')
 })
-
-
-
-// const debug_log = document.createElement('div')
-// debug_log.style.cssText = 'position:fixed;bottom:0;left:0;z-index:9999;background:rgba(0,0,0,0.8);color:lime;font-size:2dvh;max-height:50vh;overflow-y:auto;width:100%;padding:4px;pointer-events:none;'
-// document.body.appendChild(debug_log)
-
-// function log(msg) {
-//     debug_log.textContent += msg + '\n'
-//     console.log(msg)
-// }
