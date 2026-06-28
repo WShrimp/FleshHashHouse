@@ -624,9 +624,6 @@ function load() {
     // for (ingredient in ingredients_dictionary) {
     //     ingredients_dictionary[ingredient].count = 0
     // }
-    language = localStorage.getItem('language')
-    console.log("language found in save: ", language)
-    update_html_texts()
     update_ingredient_buttons_state()
     update_trays_buttons_state()
     day = JSON.parse(localStorage.getItem('day'))
@@ -1437,6 +1434,8 @@ function save_found() {
     let continue_day = JSON.parse(localStorage.getItem('day'))
     play_subcontainer.appendChild(continue_button)
 
+    language = localStorage.getItem('language')
+    update_html_texts()
 
     const continue_text = document.createElement('span')
     continue_text.setAttribute('data-i18n', 'continue')
