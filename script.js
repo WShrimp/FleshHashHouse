@@ -1530,9 +1530,11 @@ function reset(full) {
 }
 
 let away_timer
+let away_triggered = false
 
 function handleAway() {
-    if (in_game) {
+    if (in_game && !away_triggered) {
+        away_triggered = true
         music.pause()
         away_timer = setTimeout(() => {
             location.reload()
@@ -1541,6 +1543,7 @@ function handleAway() {
 }
 
 function handleReturn() {
+    away_triggered = false
     clearTimeout(away_timer)
     if (in_game && music.paused) {
         music.play().catch(() => {})
