@@ -249,7 +249,6 @@ radio.addEventListener('animationend', function(e) {
     if (e.animationName == 'fade-in') {
         radio.style.opacity = 1
         setTimeout(() => {
-            console.log('ANIMATION FADE OUT')
             radio.style.animation = 'fade-out 3s ease-in forwards'
     }, 1500);
     }
@@ -1009,7 +1008,10 @@ function start_day_timer() {
 }
 
 function customer_appear() {
-    if (!in_game) return;
+    if (!in_game) {
+        console.log('customer appear in_game check: false')
+        return
+    };
     console.log('customer appear')
     load_image_timer = setTimeout(() => {
         console.log('adding spinning animation')
