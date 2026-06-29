@@ -70,6 +70,7 @@ figure {
     padding: 0px;
     margin: 0px;
 }
+
 button {
     /* background: rgb(96, 67, 127); */
     background: rgb(64, 50, 110);
@@ -88,9 +89,6 @@ button:disabled {
     opacity: 0.65;
 }
 
-/* h4 { */
-    /* margin: 10% */
-/* } */
 
 
 .top-bar {
@@ -126,12 +124,10 @@ button:disabled {
 }
 #day-goal-pay {
     position: absolute;
-    /* width: 1vw; */
     left: 0;
     margin: 2dvh;
     margin-left: -0.3dvh;
     width: 80%;
-    /* max-width: 90%; */
     height: 6.5dvh;
     text-wrap: wrap;
     justify-content: center;
@@ -237,6 +233,21 @@ button:disabled {
 
     /* height: 50%; */
     image-rendering: pixelated;
+}
+.customer #customer-load-icon {
+    position: absolute;
+    display: none;
+    left: 12dvh;
+    top: 30dvh;
+    width: 2dvh;
+    height: 2dvh;
+    border: 0.4dvh dotted rgb(206, 115, 171);
+    /* border: 0.4dvh dashed rgb(206, 115, 171); */
+    border-radius: 50%;
+}
+.spinning {
+    display: block;
+    animation: spin 6s linear infinite;
 }
 
 .order-panel {
@@ -466,10 +477,8 @@ button:disabled {
     max-width: 100%;
     max-height: 100%;
     gap: 0.5dvh;
-    /* padding-bottom: 1dvh; */
 }
 .tray-ingredient-button {
-    /* min-width: 20vw; */
     display: grid;
     grid-template-rows: repeat(1, 1fr);
     min-height: 0;
@@ -479,25 +488,17 @@ button:disabled {
     max-width: 100%;
     max-height: 100%;
     background-color: rgb(139, 70, 141);
-    /* opacity: 1; */
     padding:0%;
-    /* justify-content: center; */
     align-content: center;
-    /* overflow: hidden; */
-    /* margin-right: 0.5dvh */
 }
 .tray-ingredient-button img {
-    /* display: none; */
     display: flex;
     min-height: 5dvh;
     min-width: 5dvh;
     justify-self: center;
-    /* height: 100%; */
-    /* width: 100%; */
     max-width: 100%;
     max-height: 100%;
     aspect-ratio: 1/1;
-    /* z-index: ; */
 }
 .ingredients-on-tray-count-display {
     width: 100%;
@@ -507,26 +508,18 @@ button:disabled {
 .tray-ingredient-holder-container {
     display: flex;
     flex-direction: column-reverse;
-    /* align-content: center; */
-    /* justify-content: center; */
-    /* padding-bottom: -1dvh; */
 }
 .tray-ingredient-holder-container img {
-    /* min-width: 8dvh; */
     position: relative;
     align-self: center;
-    /* justify-self:center; */
     width: 90%;
     max-width: 8dvh;
     max-height: 5dvh;
     overflow:visible;
     display: flex;
     object-fit: cover;
-    /* margin-top: -78%; */
     margin-top: -4dvh;
     margin-bottom: 5%;
-    /* margin-top: -8rem; */
-    /* margin-top: -12vw; */
 }
 .tray-buy-button {
     /* display: flex */
@@ -534,9 +527,6 @@ button:disabled {
     width: 12vw;
     min-width: 6dvh;
     align-self: center;
-    /* justify-self: center; */
-    /* justify-content: center; */
-    /* align-content: center; */
     background-color: rgb(139, 70, 141);
     border-color: rgb(64, 50, 110);
 }
@@ -827,7 +817,9 @@ button:disabled {
 }
 .menu h4 {
     margin-top: 2dvh;
-    margin-bottom: 2dvh;
+    margin-bottom: 3dvh;
+    font-size: clamp(0.5dvw, 5dvw, 5dvh);
+    /* font-size: 1dvh; */
 }
 
 .menu-button {
@@ -837,8 +829,8 @@ button:disabled {
     /* height: 120px; */
     /* font-size: 50px; */
     z-index: 100;
-    margin: 1.5vw;
-    padding: 4vw;
+    margin: 1vh;
+    padding: 3dvh 1dvh 3dvh 1dvh;
     /* border: none; */
     touch-action: manipulation
 }
@@ -849,6 +841,7 @@ button:disabled {
     height: 100%;
     width: 100%;
     align-items: center;
+    justify-content: center;
     /* background-color: rgb(139, 70, 141); */
 }
 
@@ -863,14 +856,18 @@ button:disabled {
 
 .play-container .name {
     position: absolute;
-    width: 70%;
-    top: -15vw;
-    margin: 0;
+    width: fit-content;
+    /* width: 70%; */
+    /* top: -15vw; */
+    top: -10dvh;
+    /* bottom: 58dvh; */
+    margin: 3dvh;
     /* align-content: center; */
     /* justify-content: center; */
     text-align: center;
     align-self: center;
-    font-size: 7vw;
+    /* font-size: clamp(1vw, 7vw, 7vw); */
+    font-size: 3.5dvh;
     text-shadow: -0.2dvh 0.3dvh 0.4dvh rgb(36, 37, 84), -0.1dvh 0.1dvh 2.5dvh rgb(206, 115, 171), -0.1dvh 0.1dvh 1dvh rgb(250, 211, 189, 0.7);
     /* text-wrap: nowrap; */
 }
@@ -892,12 +889,17 @@ button:disabled {
 .play-subcontainer .max-score-container {
     text-wrap: nowrap;
     display: flex;
-    gap: 1dvh
+    gap: 1dvh;
+    margin-bottom: 1dvh;
+    
 }
 .play-subcontainer .description {
     margin: 3dvh;
-    margin-top: 1dvh;
+    margin-top: -2dvh;
+    margin-bottom: 2dvh;
     font-size: 80%;
+    display: flex;
+    flex-direction: column;
     /* background-color: rgb(64, 50, 110); */
     /* border: 0.4dvh, rgb(64, 50, 110), solid; */
     /* padding: 5%; */
@@ -1154,4 +1156,7 @@ button:enabled:active {
         transform: translateY(-100px);
     }
     
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }

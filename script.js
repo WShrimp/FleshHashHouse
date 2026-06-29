@@ -12,6 +12,7 @@ const day_goal_pay_button = document.getElementById('day-goal-pay')
 const day_display = document.getElementById('day');
 const time_display = document.getElementById('time');
 const customer_image = document.querySelector('.customer figure img');
+const customer_load_icon = document.getElementById('customer-load-icon')
 const kitchen = document.querySelector('.kitchen .grid');
 const lives_display = document.getElementById('lives')
 const score_display = document.getElementById('max-score')
@@ -66,13 +67,15 @@ const goals = [100, 200, 300, 500, 900, 1200, 2000, 5000]
 
 // savable
 let day = 0
-let starting_money = 50
+let starting_money = 50000
 let money = 50 // also in reset btw
 let min_wait_time = 4
 // let language = 'en'
 
 // temporary
 let day_min_time = 3 //3
+let seconds = 0
+let minutes
 
 let help_open = false
 
@@ -89,6 +92,7 @@ if (language != 'ru') {language = 'en'}
 
 let day_goal = 0
 let timer
+let load_image_timer
 let ingredient_type = ``
 let plate_given = false
 let is_monster = true
@@ -112,6 +116,8 @@ const translations = {
         max_score: 'РЕКОРД: ДЕНЬ ',
 
         description: 'Готовьте и собирайте бургеры из подходящих ингредиентов для людей и монстров',
+        description1: '- Для мобильного браузера',
+        description2: '- Присутствует контент 18+',
         if_windows: 'Чтобы играть на пк попробуйте f12, затем shift+ctrl+m'
     },
     en: {
@@ -127,6 +133,8 @@ const translations = {
         max_score: 'MAX SCORE: DAY ',
 
         description: 'Chose right ingredients to make burgers for humans and monsters',
+        description1: '- For mobile',
+        description2: '- 18+ content warning',
         if_windows: 'To play from pc you can try f12, then shift+ctrl+m'
     }
 }
@@ -161,8 +169,6 @@ const upgrade_translations = {
 }
 
 function t(key) {
-    // console.log(language)
-    // console.log('key:', key)
     return translations[language][key] ?? upgrade_translations[language][key];
 }
 function update_html_texts() {
@@ -194,15 +200,15 @@ language_button.addEventListener('click', function() {
 })
 
 run_upgrades={
-    'max_ingredients': {name: '+ 1 max ingredients', type: 'add', base_value: 3, starting_value: 3, value: 3, max: 3, level: 0},
-    'money_multiplier': {name: 'more tips', type: 'multiply', base_value: 1.1, starting_value: 1.2, value: 1.2, max: 5, level: 0},
+    'max_ingredients': {name: '+ 1 max ingredients', type: 'add', base_value: 3, starting_value: 3, value: 3, max: 1, level: 0},
+    'money_multiplier': {name: 'more tips', type: 'multiply', base_value: 1.15, starting_value: 1.2, value: 1.2, max: 4, level: 0},
     'animation_speed': {name: 'faster animation speed', type: 'add', base_value: 1, starting_value: 1, value: 1, max: 1, level: 0},
     'additional_customer_time': {name: 'customer patience', type: 'multiply', base_value: 2, starting_value: 1, value: 0, max: 3, level: 0},
-    'customer_demand': {name: 'less items in order', type: 'multiply', base_value: 1.2, starting_value: 1, value: 1, max: 5, level: 0},
+    'customer_demand': {name: 'less items in order', type: 'multiply', base_value: 1.25, starting_value: 1, value: 1, max: 4, level: 0},
     'additional_day_time': {name: 'longer day time', type: 'multiply', base_value: 30, starting_value: 0, value: 0, max: 4, level: 0},
-    'faster_cooking_multiplier': {name: 'faster cooking', type: 'multiply', base_value: 1.1, starting_value: 1, value: 1, max: 5, level: 0},
+    'faster_cooking_multiplier': {name: 'faster cooking', type: 'multiply', base_value: 1.15, starting_value: 1, value: 1, max: 4, level: 0},
     'starting_money': {name: 'starting money', type: 'multiply', base_value: 50, starting_value: 0, value: 0, max: 5, level: 0},
-    'click_power': {name: 'click power', type: 'multiply', base_value: 1.25, starting_value: 1, value: 1, max: 5, level: 0},
+    'click_power': {name: 'click power', type: 'multiply', base_value: 1.3, starting_value: 1, value: 1, max: 3, level: 0},
     'money': {name: 'money + 50', type: 'money', base_value: 50, starting_value: 50, value: 50, max: 500, level: ''},
     'lives': {name: 'lives + 1', type: 'add', base_value: 3, starting_value: 3, value: 3, max: 3, level: 3},
 }
@@ -943,8 +949,8 @@ function day_start(){
     in_game = true
     money += run_upgrades['starting_money'].value
     money_display.textContent = '$' + money
-    let minutes = day_min_time
-    let seconds = 0
+    minutes = day_min_time
+    seconds = 0
     if (run_upgrades['additional_day_time'].level > 0){
         seconds = 0 + run_upgrades['additional_day_time'].value}
     day += 1
@@ -963,13 +969,20 @@ function day_start(){
 
     goal_text.textContent = t('goal')
 
-    // goal_display.textContent = t('goal') + `$${day_goal}`
     customer_appear()
     const day_text = document.getElementById('day-text')
-    // day_display.textContent = t('day'), day    
     day_text.textContent = t('day'), 
     day_display.textContent = day
-    
+
+    // start_day_timer()
+    // timer = setInterval(() => {
+    //     handle_day_time()
+    // }, 1000);
+
+    update_buttons_state()
+}
+function start_day_timer() {
+    if (timer) {return}
     timer = setInterval(() => {
         seconds -= 1
         while (seconds >= 60) {
@@ -992,15 +1005,22 @@ function day_start(){
         }
         time_display.textContent = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`  
     }, 1000);
+
 }
 
 function customer_appear() {
-    // console.log("customer_appear")    
     if (!in_game) return;
+
+    load_image_timer = setTimeout(() => {
+        customer_load_icon.classList.add('spinning')
+    }, 2000)
+
     fill_order()
     customer_image.style.animation = 'slide-out-opacity ' + 0.6 / run_upgrades['animation_speed'].value + 's ease-in-out'
 }
 customer_image.addEventListener('animationend', function(e) {
+    customer_load_icon.classList.remove('spinning')
+    clearTimeout(load_image_timer)
     if (e.animationName == 'slide-out-opacity') {
         is_monster = Boolean(Math.round(Math.random()))
         // console.log("is_monster: ", is_monster)
@@ -1018,11 +1038,11 @@ customer_image.addEventListener('load', function(e) {
         return
     }
 
-    // customer_image.style.animation = 'slide-in-opacity ' + 0.6 / run_upgrades['animation_speed'].value + 's ease-in-out'
-    // const bun_plate = document.createElement('img')
-    // bun_plate.className = 'on-plate-bun'
-    // bun_plate.src = "images/ingredients-plate/plate.png"
-    // plate.appendChild(bun_plate)
+    start_day_timer()
+    // timer = setInterval(() => {
+    //     handle_day_time()
+    // }, 1000)
+
     plate.style.display = 'flex'
     plate.style.animation = 'slide-in ' + 0.7 / run_upgrades['animation_speed'].value + 's ease-in-out'
     requestAnimationFrame(() => {
@@ -1339,6 +1359,7 @@ plate.addEventListener('animationend', function(e) {
 function lose() {
     in_game = false
     clearInterval(timer)
+    timer = null
     music.pause()
     play_sound('lose')
     // console.log("LOSE")
@@ -1531,6 +1552,7 @@ function reset(full) {
     full_plate = []
     plate_given = false
     clearInterval(timer)
+    timer = null
     wait_timer.style.animation = ''
     plate.style.animation = ''
     plate.style.display = 'none'
@@ -1549,9 +1571,11 @@ function handleAway(source) {
     if (in_game && !away_triggered) {
         away_triggered = true
         music.pause()
+        clearInterval(timer)
+        timer = null
         away_timer = setTimeout(() => {
             location.reload()
-        }, 20000)
+        }, 30000)
     }
 }
 
@@ -1559,6 +1583,10 @@ function handleReturn(source) {
     if (!away_triggered) return  // нечего сбрасывать
     away_triggered = false
     clearTimeout(away_timer)
+    start_day_timer()
+    // timer = setInterval(() => {
+        // handle_day_time()
+    // }, 1000);
     if (in_game && music.paused) {
         music.play().catch(() => {})
     }
