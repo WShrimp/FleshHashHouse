@@ -212,8 +212,8 @@ ingredients_dictionary={
     "h-filling": { type : 'filling', is_monster: false, count: 0, difficulity: 70, initial_level: -1, level: -1, bits: 0},
     "m-sauce": { type: 'sauce', is_monster: true, count: 0, difficulity: 100, initial_level: -1, level: -1, bits: 0},
     "h-sauce": { type: 'sauce', is_monster: false, count: 0, difficulity: 100, initial_level: -1, level: -1, bits: 0},
-    "h-topping": { type: 'topping', is_monster: false, count: 0, difficulity: 200, initial_level: -1, level: -1, bits: 0},
     "m-topping": { type: 'topping', is_monster: true, count: 0, difficulity: 200, initial_level: -1, level: -1, bits: 0},
+    "h-topping": { type: 'topping', is_monster: false, count: 0, difficulity: 200, initial_level: -1, level: -1, bits: 0},
 };
 
 trays={
@@ -484,6 +484,10 @@ function handle_tray_click(ingredient_holder_tray_container, ingredients_on_tray
 function tray_set_full_width() {
     document.documentElement.style.setProperty('--table-display', 'none');
     document.documentElement.style.setProperty('--tray-type-width', '100%');
+        resizeTimer = setTimeout(() => {
+        // console.log('RESZE')
+        reset_table();
+    }, 200);
 }
 
 function getUniqueTypes() {
@@ -775,13 +779,13 @@ function update_trays_buttons_state() {
 }
 
 function create_ingredient_buttons(type) {
-    console.log('creating buttons for', type)
+    // console.log('creating buttons for type: ', type)
     const ingredient_type_column = document.createElement('div')
     ingredient_type_column.className = 'ingredient-type-column'
     kitchen.appendChild(ingredient_type_column)
     
     for (let ingredient of getIngredientsByType(type)) {
-        
+        // console.log('creating buttons for ingredient: ', ingredient)
         const ingredient_buttons_row = document.createElement('div')
         ingredient_buttons_row.className = 'ingredient-buttons-row'
         ingredient_type_column.appendChild(ingredient_buttons_row)
@@ -1542,7 +1546,7 @@ function handleAway(source) {
         music.pause()
         away_timer = setTimeout(() => {
             location.reload()
-        }, 10000)
+        }, 20000)
     }
 }
 
