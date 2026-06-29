@@ -1014,13 +1014,12 @@ function customer_appear() {
     load_image_timer = setTimeout(() => {
         customer_load_icon.classList.add('spinning')
     }, 2000)
-
+    clearTimeout(away_timer)
     fill_order()
     customer_image.style.animation = 'slide-out-opacity ' + 0.6 / run_upgrades['animation_speed'].value + 's ease-in-out'
 }
 customer_image.addEventListener('animationend', function(e) {
-    customer_load_icon.classList.remove('spinning')
-    clearTimeout(load_image_timer)
+
     if (e.animationName == 'slide-out-opacity') {
         is_monster = Boolean(Math.round(Math.random()))
         // console.log("is_monster: ", is_monster)
@@ -1038,6 +1037,8 @@ customer_image.addEventListener('load', function(e) {
         return
     }
 
+    customer_load_icon.classList.remove('spinning')
+    clearTimeout(load_image_timer)
     start_day_timer()
     // timer = setInterval(() => {
     //     handle_day_time()
