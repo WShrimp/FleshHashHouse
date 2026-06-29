@@ -1,3 +1,5 @@
+// jesus crist this was supposed to be a small project
+
 const table = document.getElementById('table')
 const table_container = document.querySelector('.table-container')
 const tray_container = document.querySelector('.tray-container')
@@ -67,7 +69,7 @@ const goals = [100, 200, 300, 500, 900, 1200, 2000, 5000]
 
 // savable
 let day = 0
-let starting_money = 50000
+let starting_money = 50
 let money = 50 // also in reset btw
 let min_wait_time = 4
 // let language = 'en'
@@ -972,12 +974,6 @@ function day_start(){
     const day_text = document.getElementById('day-text')
     day_text.textContent = t('day'), 
     day_display.textContent = day
-
-    // start_day_timer()
-    // timer = setInterval(() => {
-    //     handle_day_time()
-    // }, 1000);
-
     update_buttons_state()
 }
 function start_day_timer() {
@@ -1004,7 +1000,6 @@ function start_day_timer() {
         }
         time_display.textContent = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`  
     }, 1000);
-
 }
 
 function customer_appear() {
@@ -1013,7 +1008,8 @@ function customer_appear() {
     load_image_timer = setTimeout(() => {
         customer_load_icon.classList.add('spinning')
     }, 2000)
-    clearTimeout(timer)
+    clearInterval(timer)
+    timer = null
     fill_order()
     customer_image.style.animation = 'slide-out-opacity ' + 0.6 / run_upgrades['animation_speed'].value + 's ease-in-out'
 }
@@ -1036,10 +1032,8 @@ customer_image.addEventListener('load', function(e) {
     console.log('customer image loaded')
     customer_load_icon.classList.remove('spinning')
     clearTimeout(load_image_timer)
+
     start_day_timer()
-    // timer = setInterval(() => {
-    //     handle_day_time()
-    // }, 1000)
 
     plate.style.display = 'flex'
     plate.style.animation = 'slide-in ' + 0.7 / run_upgrades['animation_speed'].value + 's ease-in-out'
